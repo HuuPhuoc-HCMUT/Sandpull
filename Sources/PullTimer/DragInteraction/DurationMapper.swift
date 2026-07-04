@@ -2,7 +2,7 @@ import Foundation
 
 struct DurationMapper {
     // Dead zone: first 24px of drag = no timer started yet (visual feedback only)
-    static let deadZone: CGFloat = 56  // ~2cm at 72pt/inch
+    static let deadZone: CGFloat = 112  // ~4cm — must drag past this before timer starts
 
     // Full usable range after dead zone maps to 1min → 24h
     // t = normalized position in (0, 1] after dead zone

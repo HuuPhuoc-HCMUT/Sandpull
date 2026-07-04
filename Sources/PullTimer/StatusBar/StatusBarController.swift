@@ -134,6 +134,14 @@ final class StatusBarController: NSObject {
                 let currentWin = overlayWindow.convertFromScreen(
                     NSRect(origin: current, size: .zero)
                 ).origin
+
+                // Compute timeline markers for current drag distance
+                let duration = DurationMapper.toDuration(pixels: dist, screenHeight: screenHeight)
+                let events = MockCalendarProvider.shared.eventsStartingNow(within: 24 * 3600)
+                overlayWindow.overlayView.markers = TimelineMapper.markers(
+                    events: events, dragDuration: duration
+                )
+
                 overlayWindow.overlayView.updateDrag(
                     from: originWin,
                     to: currentWin,
@@ -141,11 +149,14 @@ final class StatusBarController: NSObject {
                 )
 
             case .leftMouseUp:
+                let inCancelZone = overlayWindow.overlayView.isInCancelZone
                 let finalDistance = overlayWindow.overlayView.dragDistance
                 overlayWindow.overlayView.resetDrag()
                 overlayWindow.hide()
 
-                if isDragging && !DurationMapper.isInDeadZone(finalDistance) {
+                if inCancelZone {
+                    // User dragged into cancel zone — discard silently
+                } else if isDragging && !DurationMapper.isInDeadZone(finalDistance) {
                     let duration = DurationMapper.toDuration(
                         pixels: finalDistance,
                         screenHeight: screenHeight
@@ -153,10 +164,8 @@ final class StatusBarController: NSObject {
                     let releaseScreen = NSEvent.mouseLocation
                     showSaveWindow(duration: duration, near: releaseScreen)
                 } else if !isDragging && !wasPopoverOpen {
-                    // Simple click with popover closed → open it
                     if let button = statusButton { openPopover(button) }
                 }
-                // !isDragging && wasPopoverOpen → already closed above, nothing to do
                 return
 
             case .keyDown where event.keyCode == 53: // Escape
