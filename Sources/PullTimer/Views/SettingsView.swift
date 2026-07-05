@@ -216,9 +216,14 @@ struct SettingsView: View {
     }
 
     private func openInternetAccounts() {
-        NSWorkspace.shared.open(
-            URL(string: "x-apple.systempreferences:com.apple.preference.internetaccounts")!
-        )
+        // macOS 13+ uses a new identifier; fall back to old one for 12 and below
+        let url: URL
+        if #available(macOS 13.0, *) {
+            url = URL(string: "x-apple.systempreferences:com.apple.Internet-Accounts-Settings.extension")!
+        } else {
+            url = URL(string: "x-apple.systempreferences:com.apple.preference.internetaccounts")!
+        }
+        NSWorkspace.shared.open(url)
     }
 
     private func settingRow(
