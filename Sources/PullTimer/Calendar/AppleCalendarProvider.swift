@@ -71,6 +71,16 @@ final class AppleCalendarProvider: CalendarProvider {
         calendarCache = []
     }
 
+    // MARK: - Source Detection
+
+    var hasExchangeSource: Bool {
+        store.sources.contains { $0.sourceType == .exchange }
+    }
+
+    var hasCalDAVSource: Bool {
+        store.sources.contains { $0.sourceType == .calDAV }
+    }
+
     // MARK: - CalendarProvider
 
     /// Synchronous — reads only the in-memory cache. Zero I/O, zero latency.
