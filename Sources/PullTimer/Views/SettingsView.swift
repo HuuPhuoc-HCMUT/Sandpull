@@ -92,11 +92,9 @@ struct SettingsView: View {
 
             Divider()
 
-            // Calendar sources hint
-            if calendarAuthorized {
-                calendarSourcesSection
-                Divider()
-            }
+            // Calendar sources hint — always shown
+            calendarSourcesSection
+            Divider()
 
             HStack {
                 Text("PullTimer 1.0")
@@ -118,13 +116,10 @@ struct SettingsView: View {
                 remindersEnabled = false
                 UserDefaults.standard.remindersEnabled = false
             }
-            // Check calendar authorization and sources
+            // Check calendar sources (independent of EventKit permission)
             let provider = AppleCalendarProvider.shared
-            calendarAuthorized = provider.isAuthorized
-            if calendarAuthorized {
-                hasMicrosoftCalendar = provider.hasExchangeSource
-                hasGoogleCalendar = provider.hasCalDAVSource
-            }
+            hasMicrosoftCalendar = provider.hasExchangeSource
+            hasGoogleCalendar = provider.hasCalDAVSource
         }
     }
 
