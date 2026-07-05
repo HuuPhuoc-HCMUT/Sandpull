@@ -28,6 +28,8 @@
     <true/>
     <key>NSRemindersUsageDescription</key>
     <string>PullTimer can add timers to Apple Reminders so they follow you across devices.</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>PullTimer shows your upcoming meetings on the drag timeline so you can set timers around your schedule.</string>
     <key>NSUserNotificationAlertStyle</key>
     <string>alert</string>
 </dict>

@@ -2,6 +2,7 @@ import Foundation
 
 /// Mock provider — generates fresh events relative to the current time on every call.
 /// Replace with AppleCalendarProvider / GoogleCalendarProvider without touching UI code.
+@MainActor
 final class MockCalendarProvider: CalendarProvider {
     static let shared = MockCalendarProvider()
     private init() {}

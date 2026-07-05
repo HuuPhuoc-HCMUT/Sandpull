@@ -105,6 +105,17 @@ final class StatusBarController: NSObject {
     private func trackDrag(from iconScreenPoint: NSPoint, wasPopoverOpen: Bool) {
         var isDragging = false
         let screenHeight = NSScreen.main?.frame.height ?? 900
+        let provider = AppleCalendarProvider.shared
+
+        // Prefetch calendar events in the background before the drag loop begins.
+        // eventsStartingNow() reads only the in-memory cache — zero latency per frame.
+        // If not authorized, request permission first then prefetch.
+        Task {
+            if !provider.isAuthorized {
+                _ = await provider.requestAccess()
+            }
+            await provider.prefetch(horizon: 24 * 3600)
+        }
 
         while true {
             guard let event = NSApp.nextEvent(
@@ -135,11 +146,11 @@ final class StatusBarController: NSObject {
                     NSRect(origin: current, size: .zero)
                 ).origin
 
-                // Compute timeline markers for current drag distance
+                // Compute timeline markers — reads from in-memory cache, zero I/O
                 let duration = DurationMapper.toDuration(pixels: dist, screenHeight: screenHeight)
-                let events = MockCalendarProvider.shared.eventsStartingNow(within: 24 * 3600)
                 overlayWindow.overlayView.markers = TimelineMapper.markers(
-                    events: events, dragDuration: duration
+                    events: provider.eventsStartingNow(within: 24 * 3600),
+                    dragDuration: duration
                 )
 
                 overlayWindow.overlayView.updateDrag(
@@ -153,6 +164,7 @@ final class StatusBarController: NSObject {
                 let finalDistance = overlayWindow.overlayView.dragDistance
                 overlayWindow.overlayView.resetDrag()
                 overlayWindow.hide()
+                provider.clearCache()
 
                 if inCancelZone {
                     // User dragged into cancel zone — discard silently
