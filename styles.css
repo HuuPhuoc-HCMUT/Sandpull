@@ -538,14 +538,6 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
   letter-spacing: -0.01em;
 }
 
-.still { padding: 0 7vw 80px; }
-.still img {
-  width: 100%;
-  border-radius: 22px;
-  aspect-ratio: 16 / 8;
-  object-fit: cover;
-}
-
 .download {
   text-align: center;
   padding: 20px 7vw 100px;
