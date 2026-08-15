@@ -31,9 +31,9 @@ Press on the hourglass and drag **down**.
 | Teal line | Distance = duration |
 | Hourglass on the line | Sand shifts as the time grows; the glass can rotate |
 | Dark bubble | Minutes + the clock time it will end |
-| Sand-colored bubble | The end time is on a quarter-hour (`:00` `:15` `:30` `:45`) |
+| Sand-colored bubble | The end time is on `:00` or `:30` |
 
-A short dead zone at the top ignores tiny movements so a click does not create a timer. Past that, every minute is available — not 5-minute buckets. Quarter-hour end times hold for a short extra pull so they are easy to land on. Turn off **Quarter-hour highlight** in Settings if you do not want the sand-colored bubble.
+A short dead zone at the top ignores tiny movements so a click does not create a timer. Past that, every minute is available — not 5-minute buckets. Quarter-hour end times hold for a short extra pull so they are easy to land on. Turn off **Half-hour highlight** in Settings if you do not want the sand-colored bubble.
 
 **Cancel:** drag onto the trash near the Dock. The timer is discarded. A haptic click can confirm you entered the zone.
 
@@ -111,7 +111,7 @@ Right-click the hourglass → **Settings…** (or `,`).
 | Max duration | 24h | Top of a full-screen drag (8h / 12h / 24h) |
 | Menu bar countdown | On | Remaining time next to the icon |
 | Hourglass rotation | On | Spin the glass while dragging |
-| Quarter-hour highlight | On | Sand color when the end time hits :00 / :15 / :30 / :45 |
+| Half-hour highlight | On | Sand color when the end time hits :00 or :30 |
 | Haptic on cancel | On | Click when you enter the trash zone |
 
 **Reset to defaults** restores Advanced only.

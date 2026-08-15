@@ -23,6 +23,6 @@ Open [http://localhost:4173](http://localhost:4173).
 
 ## Publish
 
-- **GitHub Pages:** set the source to `/website` (or copy this folder to `/docs`).
-- **Netlify / Cloudflare Pages:** point the publish directory at `website`.
+Live site: [https://huuphuoc-hcmut.github.io/Sandpull/](https://huuphuoc-hcmut.github.io/Sandpull/) (the `gh-pages` branch is this folder).
+
 Download file: `website/downloads/Sandpull.dmg` (built with `make dmg` from the repo root).

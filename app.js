@@ -32,9 +32,11 @@ function short(minutes) {
 }
 
 function isQuarter(minutes) {
-  const end = endTime(minutes);
-  const slot = end.getMinutes() % 15;
-  return slot === 0;
+  return endTime(minutes).getMinutes() % 15 === 0;
+}
+
+function isHalfHour(minutes) {
+  return endTime(minutes).getMinutes() % 30 === 0;
 }
 
 const DEAD_ZONE = 48;
@@ -125,7 +127,7 @@ function placeDrag(root, line, glass, bubble, from, to, minutes, trash) {
   bubble.style.opacity = dead || state.inCancel ? "0" : "1";
   bubble.style.left = `${to.x}px`;
   bubble.style.top = `${to.y}px`;
-  bubble.classList.toggle("on-clock", !dead && !state.inCancel && isQuarter(minutes));
+  bubble.classList.toggle("on-clock", !dead && !state.inCancel && isHalfHour(minutes));
   const minsEl = bubble.querySelector("strong");
   const endEl = bubble.querySelector("span");
   if (minsEl) minsEl.textContent = minutes >= 60 ? short(minutes) : `${minutes} min`;
