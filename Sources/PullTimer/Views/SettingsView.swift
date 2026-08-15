@@ -230,6 +230,16 @@ struct SettingsView: View {
                     Divider().padding(.leading, 48)
 
                     settingRow(
+                        icon: "paintpalette.fill",
+                        iconColor: Theme.sandDeep,
+                        title: "Quarter-hour highlight",
+                        subtitle: "Sand color when the end time hits :00, :15, :30, :45",
+                        isOn: $settings.highlightQuarterHours
+                    )
+
+                    Divider().padding(.leading, 48)
+
+                    settingRow(
                         icon: "hand.tap.fill",
                         iconColor: .orange,
                         title: "Haptic on cancel",

@@ -33,7 +33,7 @@ Press on the hourglass and drag **down**.
 | Dark bubble | Minutes + the clock time it will end |
 | Sand-colored bubble | The end time is on a quarter-hour (`:00` `:15` `:30` `:45`) |
 
-A short dead zone at the top ignores tiny movements so a click does not create a timer. Past that, every minute is available — not 5-minute buckets.
+A short dead zone at the top ignores tiny movements so a click does not create a timer. Past that, every minute is available — not 5-minute buckets. Quarter-hour end times hold for a short extra pull so they are easy to land on. Turn off **Quarter-hour highlight** in Settings if you do not want the sand-colored bubble.
 
 **Cancel:** drag onto the trash near the Dock. The timer is discarded. A haptic click can confirm you entered the zone.
 
@@ -82,7 +82,7 @@ You can run several timers at once. They survive quitting and reopening the app.
 PullTimer keeps the expired timer (it moves to **Done**) and shows an in-app popup:
 
 - **+5 min** / **+10 min** — snooze
-- **View** — open the list
+- **Done** — clear the timer
 - **×** — dismiss the popup
 
 A sound can play if Notification Sound is on. System banners stay quiet while the app is running so the in-app popup is the one you see.
@@ -111,6 +111,7 @@ Right-click the hourglass → **Settings…** (or `,`).
 | Max duration | 24h | Top of a full-screen drag (8h / 12h / 24h) |
 | Menu bar countdown | On | Remaining time next to the icon |
 | Hourglass rotation | On | Spin the glass while dragging |
+| Quarter-hour highlight | On | Sand color when the end time hits :00 / :15 / :30 / :45 |
 | Haptic on cancel | On | Click when you enter the trash zone |
 
 **Reset to defaults** restores Advanced only.

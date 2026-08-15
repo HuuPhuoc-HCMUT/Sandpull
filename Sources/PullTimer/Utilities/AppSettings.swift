@@ -38,6 +38,7 @@ final class AppSettings: ObservableObject {
         static let showMenuBarCountdown = "adv.showMenuBarCountdown"
         static let rotateHourglass = "adv.rotateHourglass"
         static let hapticOnCancel = "adv.hapticOnCancel"
+        static let highlightQuarterHours = "adv.highlightQuarterHours"
     }
 
     static let defaultAddMinutesDefault = 15
@@ -47,6 +48,7 @@ final class AppSettings: ObservableObject {
     static let showMenuBarCountdownDefault = true
     static let rotateHourglassDefault = true
     static let hapticOnCancelDefault = true
+    static let highlightQuarterHoursDefault = true
 
     @Published var defaultAddMinutes: Int {
         didSet { defaults.set(defaultAddMinutes, forKey: Key.defaultAddMinutes) }
@@ -69,6 +71,9 @@ final class AppSettings: ObservableObject {
     @Published var hapticOnCancel: Bool {
         didSet { defaults.set(hapticOnCancel, forKey: Key.hapticOnCancel) }
     }
+    @Published var highlightQuarterHours: Bool {
+        didSet { defaults.set(highlightQuarterHours, forKey: Key.highlightQuarterHours) }
+    }
 
     var defaultAddDuration: TimeInterval { TimeInterval(defaultAddMinutes * 60) }
     var deadZonePixels: CGFloat { CGFloat(deadZone) }
@@ -84,6 +89,7 @@ final class AppSettings: ObservableObject {
         showMenuBarCountdown = Self.bool(d, Key.showMenuBarCountdown, Self.showMenuBarCountdownDefault)
         rotateHourglass = Self.bool(d, Key.rotateHourglass, Self.rotateHourglassDefault)
         hapticOnCancel = Self.bool(d, Key.hapticOnCancel, Self.hapticOnCancelDefault)
+        highlightQuarterHours = Self.bool(d, Key.highlightQuarterHours, Self.highlightQuarterHoursDefault)
     }
 
     func resetAdvanced() {
@@ -94,6 +100,7 @@ final class AppSettings: ObservableObject {
         showMenuBarCountdown = Self.showMenuBarCountdownDefault
         rotateHourglass = Self.rotateHourglassDefault
         hapticOnCancel = Self.hapticOnCancelDefault
+        highlightQuarterHours = Self.highlightQuarterHoursDefault
     }
 
     private static func int(_ d: UserDefaults, _ key: String, _ fallback: Int) -> Int {

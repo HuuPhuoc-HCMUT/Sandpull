@@ -183,10 +183,16 @@ final class StatusBarController: NSObject {
                 wasInCancelZone = inCancel
 
                 if !inCancel && !DurationMapper.isInDeadZone(dist) {
-                    let duration = DurationMapper.toDuration(pixels: dist, screenHeight: screenHeight)
-                    if let slot = DurationMapper.clockQuarterSlot(for: duration), slot != lastClockSlot {
-                        Self.playClockHaptic()
+                    let duration = DurationMapper.toDuration(
+                        pixels: dist,
+                        screenHeight: screenHeight,
+                        heldQuarter: lastClockSlot
+                    )
+                    if let slot = DurationMapper.clockQuarterSlot(for: duration) {
+                        if slot != lastClockSlot { Self.playClockHaptic() }
                         lastClockSlot = slot
+                    } else {
+                        lastClockSlot = nil
                     }
                 } else if DurationMapper.isInDeadZone(dist) {
                     lastClockSlot = nil
@@ -203,7 +209,8 @@ final class StatusBarController: NSObject {
                 } else if isDragging && !DurationMapper.isInDeadZone(finalDistance) {
                     let duration = DurationMapper.toDuration(
                         pixels: finalDistance,
-                        screenHeight: screenHeight
+                        screenHeight: screenHeight,
+                        heldQuarter: lastClockSlot
                     )
                     closePopover()
                     showSaveWindow(duration: duration, title: "", near: menuBarPoint()) { [weak self] title, dur in
@@ -392,7 +399,9 @@ final class StatusBarController: NSObject {
         expiryWindow = nil
 
         let view = ExpiryPopupView(item: item) { [weak self] in
-            self?.showTimerList()
+            self?.store.remove(id: item.id)
+            self?.expiryWindow?.close()
+            self?.expiryWindow = nil
         } onDismiss: { [weak self] in
             self?.expiryWindow?.close()
             self?.expiryWindow = nil
@@ -504,7 +513,6 @@ final class StatusBarController: NSObject {
             },
             openSave: { [weak self] duration in
                 guard let self else { return }
-                self.tour?.revealChrome()
                 self.showSaveWindow(
                     duration: duration,
                     title: "",
@@ -539,7 +547,7 @@ final class StatusBarController: NSObject {
             overlayWindow.convertFromScreen(NSRect(origin: p, size: .zero)).origin
         }
         let origin = win(icon)
-        let steps = 52
+        let steps = 64
         for i in 1...steps {
             guard tour?.isRunning == true else { break }
             let t = CGFloat(i) / CGFloat(steps)

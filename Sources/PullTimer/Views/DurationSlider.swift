@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DurationSlider: View {
     @Binding var duration: TimeInterval
+    @ObservedObject private var settings = AppSettings.shared
 
     private var progress: Binding<Double> {
         Binding(
@@ -11,7 +12,7 @@ struct DurationSlider: View {
     }
 
     private var onClock: Bool {
-        DurationMapper.clockQuarterSlot(for: duration) != nil
+        settings.highlightQuarterHours && DurationMapper.clockQuarterSlot(for: duration) != nil
     }
 
     var body: some View {

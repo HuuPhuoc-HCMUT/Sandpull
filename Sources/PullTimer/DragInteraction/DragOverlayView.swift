@@ -76,7 +76,9 @@ final class DragOverlayView: NSView {
         let inDeadZone = DurationMapper.isInDeadZone(dragDistance)
         let inCancel = isInCancelZone
         let duration = DurationMapper.toDuration(pixels: dragDistance, screenHeight: screenHeight)
-        let onClock = !inDeadZone && !inCancel && DurationMapper.clockQuarterSlot(for: duration) != nil
+        let onClock = !inDeadZone && !inCancel
+            && AppSettings.shared.highlightQuarterHours
+            && DurationMapper.clockQuarterSlot(for: duration) != nil
 
         drawLine(faded: inDeadZone || inCancel)
 

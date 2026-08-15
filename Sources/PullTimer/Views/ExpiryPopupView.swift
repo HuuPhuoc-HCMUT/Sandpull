@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ExpiryPopupView: View {
     let item: TimerItem
-    let onView: () -> Void
+    let onDone: () -> Void
     let onDismiss: () -> Void
     let onSnooze: (Int) -> Void
 
@@ -45,7 +45,7 @@ struct ExpiryPopupView: View {
                 snoozeButton(minutes: 5)
                 snoozeButton(minutes: 10)
                 Spacer()
-                Button("View") { onView() }
+                Button("Done") { onDone() }
                     .buttonStyle(SaveButtonStyle())
             }
         }

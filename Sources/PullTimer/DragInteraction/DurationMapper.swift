@@ -4,7 +4,11 @@ import Foundation
 enum DurationMapper {
     static var deadZone: CGFloat { AppSettings.shared.deadZonePixels }
 
-    static func toDuration(pixels: CGFloat, screenHeight: CGFloat = 900) -> TimeInterval {
+    static func toDuration(
+        pixels: CGFloat,
+        screenHeight: CGFloat = 900,
+        heldQuarter: Int? = nil
+    ) -> TimeInterval {
         let settings = AppSettings.shared
         let usable = max(400, screenHeight - 24) - settings.deadZonePixels
         let effective = pixels - settings.deadZonePixels
@@ -14,7 +18,20 @@ enum DurationMapper {
         let maxSeconds = TimeInterval(settings.maxDurationHours * 3600)
         let raw = mapped(t: t, feel: settings.dragFeel, maxSeconds: maxSeconds)
         let minutePrecise = max(60, (raw / 60).rounded() * 60)
-        return alignToClock(min(maxSeconds, minutePrecise), maxSeconds: maxSeconds)
+        return stickToClockQuarter(
+            min(maxSeconds, minutePrecise),
+            pixels: pixels,
+            screenHeight: screenHeight,
+            maxSeconds: maxSeconds,
+            heldQuarter: heldQuarter
+        )
+    }
+
+    /// Drag distance that produces `duration` on the same curve (no clock magnet).
+    static func pixelsForDuration(_ duration: TimeInterval, screenHeight: CGFloat = 900) -> CGFloat {
+        let settings = AppSettings.shared
+        let usable = max(400, screenHeight - 24) - settings.deadZonePixels
+        return settings.deadZonePixels + CGFloat(normalized(from: duration)) * usable
     }
 
     /// Soft notch toward :00 / :15 / :30 / :45 on the real clock — not 5-minute duration buckets.
@@ -31,7 +48,7 @@ enum DurationMapper {
         let rem = minute % 15
         let toPrev = TimeInterval(rem * 60 + second)
         let toNext = TimeInterval((15 - rem) * 60 - second)
-        let notch: TimeInterval = 70
+        let notch: TimeInterval = 98
         var aligned = duration
         if toPrev > 0 && toPrev <= notch && toPrev <= toNext {
             aligned = duration - toPrev
@@ -39,6 +56,41 @@ enum DurationMapper {
             aligned = duration + toNext
         }
         return min(maxSeconds, max(60, aligned))
+    }
+
+    /// Flat stretch around a quarter-hour so the mark is easy to hold while dragging.
+    /// Enter at ~22px; stay stuck a bit longer (~36px) once already on that mark.
+    static func stickToClockQuarter(
+        _ duration: TimeInterval,
+        pixels: CGFloat,
+        screenHeight: CGFloat,
+        maxSeconds: TimeInterval,
+        heldQuarter: Int? = nil,
+        now: Date = Date()
+    ) -> TimeInterval {
+        guard duration > 0 else { return 0 }
+        let end = now.addingTimeInterval(duration)
+        let cal = Calendar.current
+        let minute = cal.component(.minute, from: end)
+        let second = cal.component(.second, from: end)
+        let rem = minute % 15
+        let toPrev = TimeInterval(rem * 60 + second)
+        let toNext = TimeInterval((15 - rem) * 60 - second)
+        let prevDur = max(60, duration - toPrev)
+        let nextDur = min(maxSeconds, duration + toNext)
+        let maxStick: TimeInterval = 210
+
+        var best: (dur: TimeInterval, dist: CGFloat)?
+        for candidate in [prevDur, nextDur] where abs(duration - candidate) <= maxStick {
+            let dist = abs(pixels - pixelsForDuration(candidate, screenHeight: screenHeight))
+            let slot = clockQuarterSlot(for: candidate, now: now)
+            let band: CGFloat = (heldQuarter != nil && slot == heldQuarter) ? 36 : 22
+            if dist <= band, best == nil || dist < best!.dist {
+                best = (candidate, dist)
+            }
+        }
+        if let best { return best.dur }
+        return alignToClock(duration, maxSeconds: maxSeconds, now: now)
     }
 
     /// Hour*60+minute when the timer would end on a quarter-hour; otherwise nil.

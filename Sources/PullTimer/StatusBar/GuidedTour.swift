@@ -63,7 +63,7 @@ final class GuidedTour {
         guard !cancelled else { return }
         showStep(2, "Drag down to choose a time.\nQuarter-hours click.")
         let icon = iconCenter()
-        let mid = NSPoint(x: icon.x, y: icon.y - 280)
+        let mid = NSPoint(x: icon.x, y: icon.y - 390)
         try? await Task.sleep(nanoseconds: 1_000_000_000)
         guard !cancelled else { return }
         let duration = await fallbackDrag(icon, mid)
@@ -75,11 +75,6 @@ final class GuidedTour {
         guard !cancelled else { return }
 
         showStep(4, "Type a name and Save.\nThis creates a real timer.")
-    }
-
-    /// Lift the dim so the real Save window reads like a normal popover.
-    func revealChrome() {
-        dimWindows.forEach { $0.animator().alphaValue = 0.12 }
     }
 
     func didFinishSave() {

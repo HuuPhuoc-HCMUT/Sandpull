@@ -9,6 +9,12 @@ let glass = NSColor(calibratedRed: 0.86, green: 0.95, blue: 0.96, alpha: 0.88)
 let glassDark = NSColor(calibratedRed: 0.16, green: 0.28, blue: 0.32, alpha: 1)
 let brass = NSColor(calibratedRed: 0.70, green: 0.56, blue: 0.34, alpha: 1)
 
+func brighter(_ color: NSColor, by factor: CGFloat) -> NSColor {
+    var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+    color.usingColorSpace(.deviceRGB)!.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+    return NSColor(calibratedHue: h, saturation: s, brightness: min(1, b * factor), alpha: a)
+}
+
 func drawHourglass(size: CGFloat, progress: CGFloat) {
     let s = size / 42
     let halfW = size * 0.28
@@ -110,9 +116,9 @@ func render(pixelSize: Int) -> NSBitmapImageRep {
 
     let rect = NSRect(x: 0, y: 0, width: size, height: size)
     let bg = NSBezierPath(rect: rect)
-    glassDark.setFill()
+    brighter(glassDark, by: 1.15).setFill()
     bg.fill()
-    tealDeep.withAlphaComponent(0.55).setFill()
+    brighter(tealDeep, by: 1.15).withAlphaComponent(0.55).setFill()
     bg.fill()
 
     NSGraphicsContext.current?.saveGraphicsState()
@@ -165,9 +171,12 @@ guard task.terminationStatus == 0 else {
 try? FileManager.default.removeItem(at: iconset)
 print("Wrote \(icns.path)")
 
-let webIcon = root.appendingPathComponent("website/assets/app-icon.png")
-if FileManager.default.fileExists(atPath: webIcon.deletingLastPathComponent().path) {
-    let data = render(pixelSize: 1024).representation(using: .png, properties: [:])!
-    try data.write(to: webIcon)
+let webDir = root.appendingPathComponent("website/assets")
+if FileManager.default.fileExists(atPath: webDir.path) {
+    let webIcon = webDir.appendingPathComponent("app-icon.png")
+    let webIcon256 = webDir.appendingPathComponent("app-icon-256.png")
+    try render(pixelSize: 1024).representation(using: .png, properties: [:])!.write(to: webIcon)
+    try render(pixelSize: 256).representation(using: .png, properties: [:])!.write(to: webIcon256)
     print("Wrote \(webIcon.path)")
+    print("Wrote \(webIcon256.path)")
 }
