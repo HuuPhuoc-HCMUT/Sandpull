@@ -1,14 +1,14 @@
-# PullTimer Guide
+# Sandpull Guide
 
-A menu bar hourglass for Mac. Drag down to set a time, name it, and let the sand run. The pull gesture is inspired by [Gestimer](https://maddin.io/gestimer/). PullTimer is not affiliated with Gestimer.
+A menu bar hourglass for Mac. Drag down to set a time, name it, and let the sand run. The pull gesture is inspired by [Gestimer](https://maddin.io/gestimer/). Sandpull is not affiliated with Gestimer.
 
-Requires **macOS 13 Ventura** or later. PullTimer stays in the menu bar — no Dock icon, no Cmd-Tab.
+Requires **macOS 13 Ventura** or later. Sandpull stays in the menu bar — no Dock icon, no Cmd-Tab.
 
 ---
 
 ## 1. First launch
 
-Download `PullTimer.dmg`, open it, and drag PullTimer into Applications. If macOS blocks the app, right-click it and choose **Open**.
+Download `Sandpull.dmg`, open it, and drag Sandpull into Applications. If macOS blocks the app, right-click it and choose **Open**.
 
 Then look at the **right side of the menu bar**. The hourglass is the app.
 
@@ -79,7 +79,7 @@ You can run several timers at once. They survive quitting and reopening the app.
 
 ## 6. When time is up
 
-PullTimer keeps the expired timer (it moves to **Done**) and shows an in-app popup:
+Sandpull keeps the expired timer (it moves to **Done**) and shows an in-app popup:
 
 - **+5 min** / **+10 min** — snooze
 - **Done** — clear the timer
@@ -99,7 +99,7 @@ Right-click the hourglass → **Settings…** (or `,`).
 |---|---|---|
 | Notification Sound | On | Play a sound when a timer ends |
 | Sync with Reminders | Off | Add each new timer to Apple Reminders |
-| Launch at Login | Off | Start PullTimer when you log in |
+| Launch at Login | Off | Start Sandpull when you log in |
 
 **Advanced**
 

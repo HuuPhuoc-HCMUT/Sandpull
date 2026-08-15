@@ -1,6 +1,6 @@
-# PullTimer website
+# Sandpull website
 
-Marketing site for the Mac app. Same teal / sand / glass language as PullTimer. The pull gesture is inspired by Gestimer.
+Marketing site for the Mac app. Same teal / sand / glass language as Sandpull. The pull gesture is inspired by Gestimer.
 
 ```
 website/
@@ -25,4 +25,4 @@ Open [http://localhost:4173](http://localhost:4173).
 
 - **GitHub Pages:** set the source to `/website` (or copy this folder to `/docs`).
 - **Netlify / Cloudflare Pages:** point the publish directory at `website`.
-Download file: `website/downloads/PullTimer.dmg` (built with `make dmg` from the repo root).
+Download file: `website/downloads/Sandpull.dmg` (built with `make dmg` from the repo root).
