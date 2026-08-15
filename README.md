@@ -1,6 +1,6 @@
 # PullTimer website
 
-Marketing site for the Mac app. Same teal / sand / glass language as PullTimer.
+Marketing site for the Mac app. Same teal / sand / glass language as PullTimer. The pull gesture is inspired by Gestimer.
 
 ```
 website/

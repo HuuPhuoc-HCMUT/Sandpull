@@ -1,6 +1,6 @@
 # PullTimer Guide
 
-A menu bar hourglass for Mac. Drag down to set a time, name it, and let the sand run.
+A menu bar hourglass for Mac. Drag down to set a time, name it, and let the sand run. The pull gesture is inspired by [Gestimer](https://maddin.io/gestimer/). PullTimer is not affiliated with Gestimer.
 
 Requires **macOS 13 Ventura** or later. PullTimer stays in the menu bar — no Dock icon, no Cmd-Tab.
 
@@ -142,4 +142,4 @@ Skip or press Esc to leave. Skipping does not create a timer.
 | Right-click | Settings, tour, Quit |
 | Esc while pulling | Cancel the pull |
 
-macOS 13+ · Apple silicon and Intel · Free
+macOS 13+ · Apple silicon and Intel · Free · Inspired by [Gestimer](https://maddin.io/gestimer/)

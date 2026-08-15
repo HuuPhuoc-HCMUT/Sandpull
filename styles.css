@@ -99,6 +99,7 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
   color: var(--muted);
   max-width: 22em;
 }
+.lede a { color: var(--accent-deep); font-weight: 510; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 12px; }
 .fine {
   color: var(--muted);
