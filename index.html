@@ -30,7 +30,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">macOS 13+  Menu bar  Free</p>
-        <h1>Set a timer by<br>pulling down.</h1>
+        <h1>Set a timer by<br>pulling down</h1>
         <p class="lede">An hourglass in the menu bar. Drag to choose a time, name it, and get back to work. No Dock icon. No extra window until you want one.</p>
         <div class="hero-actions">
           <a class="btn-save" href="downloads/PullTimer.dmg" download>Download for Mac</a>
@@ -46,10 +46,18 @@
               <span class="apple" aria-hidden="true"></span>
               <span class="mb-app">Finder</span>
               <span class="mb-spacer"></span>
-              <span class="mb-clock" id="filmClock">16:39</span>
               <span class="status-icon" id="filmIcon">
                 <svg class="hg" viewBox="0 0 42 42" aria-hidden="true"><use href="#hourglass"></use></svg>
                 <span class="status-time" id="filmStatus"></span>
+              </span>
+              <span class="mb-extras" aria-hidden="true">
+                <svg class="mb-sys" viewBox="0 0 16 16"><path d="M2 10.5c3.2-3.2 8.8-3.2 12 0"/><path d="M4.4 12.4c1.9-1.8 5.3-1.8 7.2 0"/><circle cx="8" cy="14" r="0.8" class="fill"/></svg>
+                <svg class="mb-sys" viewBox="0 0 16 16"><rect x="1.5" y="5" width="11" height="6.5" rx="1.2"/><path d="M13.2 7v2.5"/><path d="M3.4 7.4h6.6v2.2H3.4z" class="fill"/></svg>
+              </span>
+              <span class="mb-clock" id="filmClock">16:39</span>
+              <span class="mb-extras" aria-hidden="true">
+                <svg class="mb-sys" viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1.1"/><rect x="9" y="2" width="5" height="5" rx="1.1"/><rect x="2" y="9" width="5" height="5" rx="1.1"/><rect x="9" y="9" width="5" height="5" rx="1.1"/></svg>
+                <svg class="mb-sys" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4"/><path d="M10.2 10.2 14 14"/></svg>
               </span>
             </div>
             <div class="film-play" id="filmPlay">
@@ -62,6 +70,13 @@
                 <span id="filmEnd">17:04</span>
               </div>
               <div class="cursor" id="filmCursor"></div>
+              <div class="trash" id="filmTrash" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4.5 7h15M9 7V5.2A1.2 1.2 0 0 1 10.2 4h3.6A1.2 1.2 0 0 1 15 5.2V7"/>
+                  <path class="can" d="M7 7l.85 13.1A1.4 1.4 0 0 0 9.24 21.4h5.52a1.4 1.4 0 0 0 1.39-1.3L17 7"/>
+                  <path d="M10 11v6.2M14 11v6.2"/>
+                </svg>
+              </div>
               <div class="save-panel" id="filmSave">
                 <div class="save-head">
                   <h3 id="filmVerbose">25 minutes</h3>
@@ -94,8 +109,8 @@
     <section class="try" id="try">
       <div class="section-copy">
         <p class="eyebrow">Interactive</p>
-        <h2>Pull the hourglass.</h2>
-        <p>Same gesture as the app. Drag down to pick a time. Quarter-hours glow sand. Release to name it.</p>
+        <h2>Pull the hourglass</h2>
+        <p>Same gesture as the app. Drag down to pick a time. Quarter-hours glow sand. Drag onto the trash to cancel. Release to name it.</p>
       </div>
       <div class="try-stage" id="tryStage">
         <div class="desktop">
@@ -103,10 +118,18 @@
             <span class="apple" aria-hidden="true"></span>
             <span class="mb-app">PullTimer</span>
             <span class="mb-spacer"></span>
-            <span class="hint" id="tryHint">Drag the hourglass down</span>
             <button type="button" class="status-icon live" id="tryIcon" aria-label="Drag to set a timer">
               <svg class="hg" viewBox="0 0 42 42"><use href="#hourglass"></use></svg>
             </button>
+            <span class="mb-extras" aria-hidden="true">
+              <svg class="mb-sys" viewBox="0 0 16 16"><path d="M2 10.5c3.2-3.2 8.8-3.2 12 0"/><path d="M4.4 12.4c1.9-1.8 5.3-1.8 7.2 0"/><circle cx="8" cy="14" r="0.8" class="fill"/></svg>
+              <svg class="mb-sys" viewBox="0 0 16 16"><rect x="1.5" y="5" width="11" height="6.5" rx="1.2"/><path d="M13.2 7v2.5"/><path d="M3.4 7.4h6.6v2.2H3.4z" class="fill"/></svg>
+            </span>
+            <span class="hint" id="tryHint">Drag the hourglass down</span>
+            <span class="mb-extras" aria-hidden="true">
+              <svg class="mb-sys" viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1.1"/><rect x="9" y="2" width="5" height="5" rx="1.1"/><rect x="2" y="9" width="5" height="5" rx="1.1"/><rect x="9" y="9" width="5" height="5" rx="1.1"/></svg>
+              <svg class="mb-sys" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4"/><path d="M10.2 10.2 14 14"/></svg>
+            </span>
           </div>
           <div class="try-canvas" id="tryCanvas">
             <div class="line" id="tryLine"></div>
@@ -116,6 +139,13 @@
             <div class="bubble" id="tryBubble">
               <strong id="tryMins">15 min</strong>
               <span id="tryEnd"></span>
+            </div>
+            <div class="trash" id="tryTrash" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4.5 7h15M9 7V5.2A1.2 1.2 0 0 1 10.2 4h3.6A1.2 1.2 0 0 1 15 5.2V7"/>
+                <path class="can" d="M7 7l.85 13.1A1.4 1.4 0 0 0 9.24 21.4h5.52a1.4 1.4 0 0 0 1.39-1.3L17 7"/>
+                <path d="M10 11v6.2M14 11v6.2"/>
+              </svg>
             </div>
             <div class="save-panel" id="trySave">
               <div class="save-head">
@@ -156,7 +186,7 @@
       <article class="feature">
         <div class="feature-text">
           <p class="eyebrow">The pull</p>
-          <h2>Further down,<br>longer timer.</h2>
+          <h2>Further down,<br>longer timer</h2>
           <p>A teal line follows your cursor. The hourglass turns as sand shifts. End times on the clock (:00, :15, :30, :45) click into place.</p>
         </div>
         <figure>
@@ -167,7 +197,7 @@
       <article class="feature flip">
         <div class="feature-text">
           <p class="eyebrow">The name</p>
-          <h2>Release, then call it something.</h2>
+          <h2>Release, then call it something</h2>
           <p>Letting go opens the save window, not the timer list. Slide the time, tap a label, or type your own. Save creates a real timer.</p>
         </div>
         <figure>
@@ -178,7 +208,7 @@
       <article class="feature">
         <div class="feature-text">
           <p class="eyebrow">The list</p>
-          <h2>Active now.<br>Done when it rings.</h2>
+          <h2>Active now<br>Done when it rings</h2>
           <p>Click the icon for the list. Live countdown pills sit on every running timer. Finished ones wait under Done until you clear them.</p>
         </div>
         <figure>
@@ -190,7 +220,7 @@
     <section class="steps" id="how">
       <div class="section-copy">
         <p class="eyebrow">How it works</p>
-        <h2>Four moves. That’s the whole app.</h2>
+        <h2>Four moves<br>That’s the whole app</h2>
         <p><a href="guide.html">Read the full guide</a> for the list, expiry, settings, and the written tour.</p>
       </div>
       <ol class="step-grid">
@@ -212,7 +242,7 @@
         <li>
           <span class="num">4</span>
           <h3>Let it run</h3>
-          <p>The menu bar counts down. When time’s up, PullTimer keeps the timer and asks what next.</p>
+          <p>The menu bar counts down. When time’s up, snooze +5 or +10, or press Done.</p>
         </li>
       </ol>
     </section>
@@ -223,7 +253,7 @@
 
     <section class="download" id="download">
       <img class="dl-icon" src="assets/app-icon.png" width="1024" height="1024" alt="PullTimer">
-      <h2>Free on the Mac.<br>Stays in the menu bar.</h2>
+      <h2>Free on the Mac<br>Stays in the menu bar</h2>
       <p>macOS 13 Ventura or later. Drag to install, then pull.</p>
       <a class="btn-save lg" href="downloads/PullTimer.dmg" download>Download PullTimer.dmg</a>
       <p class="fine">Version 1.0, macOS 13 or later. Open the disk image, drag PullTimer into Applications. If macOS blocks it, right-click the app and choose Open.</p>
