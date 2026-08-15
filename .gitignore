@@ -1,4 +1,6 @@
 .build/
+.dmg-root/
+PullTimer.app/
 .DS_Store
 *.o
 *.d

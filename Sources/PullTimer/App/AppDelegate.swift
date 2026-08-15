@@ -9,6 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Wire up subsystems
         NotificationManager.shared.requestAuthorization()
+        NotificationManager.shared.clearDelivered()
 
         Task { @MainActor in
             let store = TimerStore.shared

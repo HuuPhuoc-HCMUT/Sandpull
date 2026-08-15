@@ -18,6 +18,16 @@ struct TimeFormatter {
         }
     }
 
+    // Menu bar: drop seconds except in the last minute
+    static func menuBar(_ interval: TimeInterval) -> String {
+        let secs = Int(max(0, interval))
+        if secs < 60 { return "\(secs)s" }
+        if secs < 3600 { return "\(secs / 60)m" }
+        let h = secs / 3600
+        let m = (secs % 3600) / 60
+        return m > 0 ? "\(h)h \(m)m" : "\(h)h"
+    }
+
     // Verbose for drag tooltip and save dialog header
     static func verbose(_ interval: TimeInterval) -> String {
         let formatter = DateComponentsFormatter()

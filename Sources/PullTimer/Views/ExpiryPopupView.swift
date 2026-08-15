@@ -4,43 +4,64 @@ struct ExpiryPopupView: View {
     let item: TimerItem
     let onView: () -> Void
     let onDismiss: () -> Void
+    let onSnooze: (Int) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(item.title.isEmpty ? "Timer Complete" : item.title)
-                        .font(.headline)
-                    Text("\(item.formattedDuration) — time's up!")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .center, spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.accent)
+                        .frame(width: 34, height: 34)
+                    Image(systemName: "hourglass")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(.white)
                 }
-                Spacer()
-                Image(systemName: "hourglass")
-                    .font(.title2)
-                    .foregroundStyle(Theme.accent)
-            }
-            .padding(.horizontal, 18)
-            .padding(.top, 18)
-            .padding(.bottom, 14)
 
-            Divider()
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(item.title.isEmpty ? "Timer Complete" : item.title)
+                        .font(.system(size: 13, weight: .semibold))
+                        .lineLimit(1)
+                    Text("\(item.formattedDuration) — time's up")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+
+                Spacer(minLength: 8)
+
+                Button(action: onDismiss) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 22, height: 22)
+                        .background(Circle().fill(Color.primary.opacity(0.08)))
+                }
+                .buttonStyle(.plain)
+                .hoverable()
+            }
 
             HStack(spacing: 8) {
-                Button("Dismiss") { onDismiss() }
-                    .keyboardShortcut(.cancelAction)
-                    .buttonStyle(CancelButtonStyle())
-
+                snoozeButton(minutes: 5)
+                snoozeButton(minutes: 10)
                 Spacer()
-
-                Button("View Tasks") { onView() }
-                    .keyboardShortcut(.defaultAction)
+                Button("View") { onView() }
                     .buttonStyle(SaveButtonStyle())
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
         }
-        .frame(width: 300)
-        .background(.regularMaterial)
+        .padding(12)
+        .frame(width: 320)
+        .pullPanel()
+    }
+
+    private func snoozeButton(minutes: Int) -> some View {
+        Button("+\(minutes) min") { onSnooze(minutes) }
+            .font(.system(size: 12, weight: .semibold))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(Capsule().fill(Theme.sand.opacity(0.48)))
+            .foregroundStyle(Theme.sandDeep)
+            .buttonStyle(.plain)
+            .hoverable()
     }
 }

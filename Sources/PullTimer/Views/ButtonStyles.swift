@@ -1,5 +1,4 @@
 import SwiftUI
-import AppKit
 
 struct QuitButtonStyle: ButtonStyle {
     @State private var isHovered = false
@@ -17,8 +16,8 @@ struct QuitButtonStyle: ButtonStyle {
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .animation(.easeOut(duration: 0.1), value: isHovered)
             .animation(.easeOut(duration: 0.08), value: configuration.isPressed)
+            .contentShape(Rectangle())
             .onHover { isHovered = $0 }
-            .pointerCursor()
     }
 }
 
@@ -37,8 +36,8 @@ struct CancelButtonStyle: ButtonStyle {
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
             .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
             .animation(.easeOut(duration: 0.12), value: isHovered)
+            .contentShape(Rectangle())
             .onHover { isHovered = $0 }
-            .pointerCursor()
     }
 }
 
@@ -59,7 +58,49 @@ struct SaveButtonStyle: ButtonStyle {
             .scaleEffect(configuration.isPressed ? 0.95 : (isHovered ? 1.03 : 1.0))
             .animation(.spring(response: 0.2, dampingFraction: 0.6), value: isHovered)
             .animation(.easeOut(duration: 0.08), value: configuration.isPressed)
+            .contentShape(Capsule())
             .onHover { isHovered = $0 }
-            .pointerCursor()
+    }
+}
+
+struct PresetChipStyle: ButtonStyle {
+    var isSelected: Bool = false
+    @State private var isHovered = false
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 11, weight: isSelected ? .semibold : .medium))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background(
+                Capsule()
+                    .fill(isSelected
+                          ? Theme.accent.opacity(0.18)
+                          : Color.primary.opacity(isHovered ? 0.08 : 0.05))
+            )
+            .foregroundStyle(isSelected ? Theme.accent : Color.secondary)
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .contentShape(Capsule())
+            .onHover { isHovered = $0 }
+    }
+}
+
+struct LabelChipRow: View {
+    var chips: [LabelChip] = LabelSuggestions.presets.map { LabelChip(title: $0) }
+    var selected: String = ""
+    let onSelect: (LabelChip) -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(chips) { chip in
+                    Button(chip.title) { onSelect(chip) }
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: 110)
+                        .buttonStyle(PresetChipStyle(isSelected: selected.caseInsensitiveCompare(chip.title) == .orderedSame))
+                }
+            }
+        }
     }
 }

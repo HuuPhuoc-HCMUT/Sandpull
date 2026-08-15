@@ -25,6 +25,10 @@ final class TimerStore: ObservableObject {
         items.append(item)
         persist()
         NotificationManager.shared.schedule(for: item)
+        syncReminder(for: item)
+    }
+
+    private func syncReminder(for item: TimerItem) {
         Task {
             guard await RemindersManager.shared.isEnabled else { return }
             do {
@@ -37,6 +41,50 @@ final class TimerStore: ObservableObject {
                 // Reminders sync failure is non-fatal
             }
         }
+    }
+
+    var activeItems: [TimerItem] {
+        items.filter { !$0.isExpired }.sorted { $0.endAt < $1.endAt }
+    }
+
+    var doneItems: [TimerItem] {
+        items.filter(\.isExpired)
+    }
+
+    var soonestActive: TimerItem? { activeItems.first }
+
+    func update(id: UUID, title: String, duration: TimeInterval) {
+        guard let idx = items.firstIndex(where: { $0.id == id }) else { return }
+        let old = items[idx]
+        let baseline = old.isExpired ? old.duration : old.remaining
+        let durationChanged = abs(baseline - duration) > 1
+
+        if !durationChanged && !old.isExpired {
+            items[idx].title = title
+            persist()
+            return
+        }
+
+        NotificationManager.shared.cancel(id: id)
+        if let reminderID = old.reminderID {
+            Task { try? await RemindersManager.shared.removeReminder(id: reminderID) }
+        }
+
+        let next = TimerItem(id: old.id, title: title, duration: duration)
+        items[idx] = next
+        persist()
+        NotificationManager.shared.schedule(for: next)
+        syncReminder(for: next)
+    }
+
+    func snooze(id: UUID, minutes: Int) {
+        let title = items.first(where: { $0.id == id })?.title ?? ""
+        update(id: id, title: title, duration: TimeInterval(minutes * 60))
+    }
+
+    func clearDone() {
+        let doneIDs = doneItems.map(\.id)
+        for id in doneIDs { remove(id: id) }
     }
 
     func remove(id: UUID) {
@@ -86,6 +134,7 @@ final class TimerStore: ObservableObject {
     }
 
     private func load() {
+        NotificationManager.shared.clearDelivered()
         guard let data = UserDefaults.standard.data(forKey: udKey),
               let decoded = try? JSONDecoder().decode([TimerItem].self, from: data) else { return }
         items = decoded
@@ -93,6 +142,7 @@ final class TimerStore: ObservableObject {
             if items[index].isExpired {
                 // App was away when this fired — keep the task, don't popup again
                 items[index].didNotify = true
+                NotificationManager.shared.cancel(id: items[index].id)
             } else {
                 NotificationManager.shared.schedule(for: items[index])
             }

@@ -10,7 +10,6 @@ struct SaveTimerView: View {
     @FocusState private var focused: Bool
 
     private static let minDuration: TimeInterval = 60
-    private static let maxDuration: TimeInterval = 24 * 3600
     private static let presets: [(label: String, seconds: TimeInterval)] = [
         ("5m", 5 * 60),
         ("10m", 10 * 60),
@@ -19,34 +18,28 @@ struct SaveTimerView: View {
         ("1h", 60 * 60)
     ]
 
+    /// When set, the field types this title then saves — used by the help tour.
+    let tourAutoTitle: String?
+
     init(duration: TimeInterval,
+         title: String = "",
+         tourAutoTitle: String? = nil,
          onSave: @escaping (String, TimeInterval) -> Void,
          onCancel: @escaping () -> Void) {
         self.onSave = onSave
         self.onCancel = onCancel
+        self.tourAutoTitle = tourAutoTitle
         _duration = State(initialValue: max(Self.minDuration, duration))
-    }
-
-    private var endDate: Date {
-        Date().addingTimeInterval(duration)
+        _description = State(initialValue: title)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
 
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(TimeFormatter.verbose(duration))
-                        .font(.headline)
-                    Text(TimeFormatter.endTime(endDate))
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                HStack(spacing: 8) {
-                    stepButton(systemName: "minus") { adjust(-60) }
-                    stepButton(systemName: "plus") { adjust(60) }
-                }
+            VStack(alignment: .leading, spacing: 8) {
+                Text(TimeFormatter.verbose(duration))
+                    .font(.headline)
+                DurationSlider(duration: $duration)
             }
             .padding(.horizontal, 18)
             .padding(.top, 18)
@@ -59,19 +52,29 @@ struct SaveTimerView: View {
                 }
             }
             .padding(.horizontal, 18)
-            .padding(.bottom, 14)
+            .padding(.bottom, 12)
 
             Divider()
 
-            VStack(alignment: .leading, spacing: 5) {
-                Text("Description")
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Label")
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundStyle(.secondary)
                     .textCase(.uppercase)
                     .kerning(0.3)
 
-                TextField("e.g. Take a break, Call mom…", text: $description, axis: .vertical)
+                LabelChipRow(
+                    chips: LabelSuggestions.chips(from: TimerStore.shared.items),
+                    selected: description
+                ) { chip in
+                    description = chip.title
+                    if let remembered = chip.duration {
+                        duration = remembered
+                    }
+                }
+
+                TextField("or type your own…", text: $description, axis: .vertical)
                     .textFieldStyle(.plain)
                     .font(.body)
                     .lineLimit(1...3)
@@ -98,59 +101,25 @@ struct SaveTimerView: View {
             .padding(.vertical, 12)
         }
         .frame(width: 300)
-        .background(.regularMaterial)
-        .onAppear { focused = true }
-    }
-
-    private func adjust(_ delta: TimeInterval) {
-        duration = min(Self.maxDuration, max(Self.minDuration, duration + delta))
-    }
-
-    private func stepButton(systemName: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: systemName)
-                .font(.system(size: 11, weight: .semibold))
-                .frame(width: 28, height: 28)
+        .pullPanel()
+        .onAppear { focused = tourAutoTitle == nil }
+        .task(id: tourAutoTitle) {
+            guard let sample = tourAutoTitle else { return }
+            await typeAndSave(sample)
         }
-        .buttonStyle(StepButtonStyle())
     }
-}
 
-private struct StepButtonStyle: ButtonStyle {
-    @State private var isHovered = false
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .foregroundStyle(Color.primary.opacity(isHovered ? 0.9 : 0.7))
-            .background(
-                Circle()
-                    .fill(Color.primary.opacity(isHovered ? 0.10 : 0.06))
-            )
-            .scaleEffect(configuration.isPressed ? 0.92 : 1.0)
-            .animation(.easeOut(duration: 0.1), value: isHovered)
-            .onHover { isHovered = $0 }
-            .pointerCursor()
-    }
-}
-
-private struct PresetChipStyle: ButtonStyle {
-    let isSelected: Bool
-    @State private var isHovered = false
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(size: 11, weight: isSelected ? .semibold : .medium))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 5)
-            .background(
-                Capsule()
-                    .fill(isSelected
-                          ? Theme.accent.opacity(0.18)
-                          : Color.primary.opacity(isHovered ? 0.08 : 0.05))
-            )
-            .foregroundStyle(isSelected ? Theme.accent : Color.secondary)
-            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-            .onHover { isHovered = $0 }
-            .pointerCursor()
+    private func typeAndSave(_ sample: String) async {
+        description = ""
+        try? await Task.sleep(nanoseconds: 1_800_000_000)
+        guard !Task.isCancelled else { return }
+        for character in sample {
+            guard !Task.isCancelled else { return }
+            description.append(character)
+            try? await Task.sleep(nanoseconds: 220_000_000)
+        }
+        try? await Task.sleep(nanoseconds: 900_000_000)
+        guard !Task.isCancelled else { return }
+        onSave(description, duration)
     }
 }

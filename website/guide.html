@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PullTimer Guide: how to use the menu bar hourglass</title>
+  <meta name="description" content="Tutorial for PullTimer: pull to set a time, name it, run several timers, and snooze when the sand runs out.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/app-icon-256.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-guide">
+  <header class="nav">
+    <a class="brand" href="index.html">
+      <img src="assets/app-icon-256.png" width="36" height="36" alt="">
+      <span>PullTimer</span>
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a class="keep" href="guide.html" aria-current="page">Guide</a>
+      <a href="GUIDE.md" class="keep">Markdown</a>
+      <a href="downloads/PullTimer.dmg" class="nav-cta" download>Download</a>
+    </nav>
+  </header>
+
+  <div class="guide-wrap">
+    <aside class="toc">
+      <p class="eyebrow">Guide</p>
+      <ol>
+        <li><a href="#first">First launch</a></li>
+        <li><a href="#pull">Pull to set a time</a></li>
+        <li><a href="#save">Name it, then Save</a></li>
+        <li><a href="#list">The timer list</a></li>
+        <li><a href="#running">While it runs</a></li>
+        <li><a href="#done">When time is up</a></li>
+        <li><a href="#settings">Settings</a></li>
+        <li><a href="#tour">In-app tour</a></li>
+        <li><a href="#ref">Short reference</a></li>
+      </ol>
+      <a class="btn-quiet toc-md" href="GUIDE.md">Download GUIDE.md</a>
+    </aside>
+
+    <article class="guide">
+      <header class="guide-hero">
+        <p class="eyebrow">Tutorial  v1.0</p>
+        <h1>How PullTimer works</h1>
+        <p class="lede">The whole app is an hourglass in the menu bar. This page is the written tour: the same four moves as <em>How it works</em> in the app, plus the list, expiry, and settings.</p>
+      </header>
+
+      <section id="first">
+        <h2><span class="num">1</span> First launch</h2>
+        <p>Download <a href="downloads/PullTimer.dmg" download>PullTimer.dmg</a>, open it, and drag PullTimer into Applications. Then look at the <strong>right side of the menu bar</strong>. That hourglass is the app. Nothing appears in the Dock or Cmd-Tab.</p>
+        <p>If macOS says the app cannot be opened, right-click PullTimer and choose <strong>Open</strong>.</p>
+        <ul>
+          <li><strong>Click</strong> the hourglass → timer list</li>
+          <li><strong>Drag down</strong> from the hourglass → set a duration</li>
+          <li><strong>Right-click</strong> → Settings, How it works, Quit</li>
+        </ul>
+        <p>Allow notifications if macOS asks, so a timer can reach you when it ends.</p>
+        <figure class="guide-fig">
+          <img src="assets/feature-drag.png" alt="Hourglass in the Mac menu bar with a teal pull line">
+          <figcaption>The hourglass lives only in the menu bar.</figcaption>
+        </figure>
+      </section>
+
+      <section id="pull">
+        <h2><span class="num">2</span> Pull to set a time</h2>
+        <p>Press the hourglass and drag <strong>down</strong>. Further down is a longer timer. Precision is one minute, not 5-minute buckets.</p>
+        <div class="callout">
+          <p>A short dead zone at the top ignores tiny movements, so a click does not create a timer. Past that, the teal line is live.</p>
+        </div>
+        <table>
+          <thead>
+            <tr><th>What you see</th><th>What it means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Teal line</td><td>Distance becomes duration</td></tr>
+            <tr><td>Hourglass on the line</td><td>Sand shifts; the glass can rotate</td></tr>
+            <tr><td>Dark bubble</td><td>Minutes + the clock time it will end</td></tr>
+            <tr><td>Sand-colored bubble</td><td>End time is on <code>:00</code> <code>:15</code> <code>:30</code> <code>:45</code></td></tr>
+          </tbody>
+        </table>
+        <p>When the end time hits a quarter-hour, the Mac trackpad clicks and only the duration bubble changes color. The line and hourglass stay teal.</p>
+        <p><strong>Cancel:</strong> drag onto the trash near the Dock. Nothing is saved. A haptic can confirm you entered the zone.</p>
+        <p><strong>Release</strong> (not on the trash) opens the Save window, not the timer list.</p>
+      </section>
+
+      <section id="save">
+        <h2><span class="num">3</span> Name it, then Save</h2>
+        <p>Letting go opens this window. Clicking the icon never does.</p>
+        <figure class="guide-fig">
+          <img src="assets/feature-save.png" alt="Save window with duration, label chips, Cancel and Save">
+          <figcaption>Release → Save. This is the name-and-duration window.</figcaption>
+        </figure>
+        <ol class="plain">
+          <li>Check the duration: slider or <code>5m</code> <code>10m</code> <code>15m</code> <code>30m</code> <code>1h</code></li>
+          <li>Pick a <strong>Label</strong> chip, or type your own</li>
+          <li><strong>Save</strong> creates a real timer. <strong>Cancel</strong> throws the pull away</li>
+        </ol>
+        <p>Chips remember titles you have used. A history chip can also restore the last duration for that name.</p>
+      </section>
+
+      <section id="list">
+        <h2><span class="num">4</span> The timer list</h2>
+        <p>Click the hourglass without dragging.</p>
+        <figure class="guide-fig">
+          <img src="assets/feature-list.png" alt="Timer list with Active countdowns and Done">
+          <figcaption>Active on top. Done waits until you clear it.</figcaption>
+        </figure>
+        <ul>
+          <li><strong>Active:</strong> teal pill is time left. Click a row to edit. × removes it.</li>
+          <li><strong>Done:</strong> expired timers stay until you press <strong>Done</strong> or <strong>Clear done</strong>.</li>
+        </ul>
+        <p>At the bottom you can add a timer without pulling: type a name, set the slider, tap a chip, then <strong>Add</strong>.</p>
+        <p>ⓘ starts the guided tour. <strong>Quit</strong> leaves the app.</p>
+      </section>
+
+      <section id="running">
+        <h2><span class="num">5</span> While a timer runs</h2>
+        <p>The menu bar can show the nearest countdown next to the hourglass. Sand in the glass falls as time passes.</p>
+        <p>Several timers can run at once. They are saved on disk, so they survive quit and relaunch.</p>
+      </section>
+
+      <section id="done">
+        <h2><span class="num">6</span> When time is up</h2>
+        <p>The timer is kept (it moves to <strong>Done</strong>) and an in-app popup appears:</p>
+        <ul>
+          <li><strong>+5 min</strong> / <strong>+10 min</strong> snooze</li>
+          <li><strong>View</strong> opens the list</li>
+          <li><strong>×</strong> dismisses the popup</li>
+        </ul>
+        <p>A sound can play if Notification Sound is on. While PullTimer is running, the system banner stays out of the way so this popup is the one you see.</p>
+      </section>
+
+      <section id="settings">
+        <h2><span class="num">7</span> Settings</h2>
+        <p>Right-click the hourglass → <strong>Settings…</strong> (shortcut <kbd>,</kbd>).</p>
+        <h3>General</h3>
+        <table>
+          <thead><tr><th>Setting</th><th>Default</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>Notification Sound</td><td>On</td><td>Play a sound when a timer ends</td></tr>
+            <tr><td>Sync with Reminders</td><td>Off</td><td>Add each new timer to Apple Reminders</td></tr>
+            <tr><td>Launch at Login</td><td>Off</td><td>Start PullTimer when you log in</td></tr>
+          </tbody>
+        </table>
+        <h3>Advanced</h3>
+        <table>
+          <thead><tr><th>Setting</th><th>Default</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>Default timer</td><td>15m</td><td>Duration used by Add in the list</td></tr>
+            <tr><td>Drag start</td><td>112 px</td><td>Dead zone before a pull begins</td></tr>
+            <tr><td>Duration curve</td><td>Balanced</td><td>Precise / Balanced / Fast: how quickly minutes grow</td></tr>
+            <tr><td>Max duration</td><td>24h</td><td>Top of a full-screen drag (8h / 12h / 24h)</td></tr>
+            <tr><td>Menu bar countdown</td><td>On</td><td>Remaining time next to the icon</td></tr>
+            <tr><td>Hourglass rotation</td><td>On</td><td>Spin the glass while dragging</td></tr>
+            <tr><td>Haptic on cancel</td><td>On</td><td>Click when you enter the trash zone</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Reset to defaults</strong> restores Advanced only.</p>
+      </section>
+
+      <section id="tour">
+        <h2><span class="num">8</span> In-app tour</h2>
+        <p>Right-click → <strong>How it works…</strong>, or tap ⓘ in the list or Settings. The tour plays on your screen:</p>
+        <ol class="plain">
+          <li>Watch the hourglass</li>
+          <li>Drag down to choose a time</li>
+          <li>Release: the Save window opens</li>
+          <li>Type a name and Save: a real timer is created</li>
+        </ol>
+        <p>Skip or press Esc to leave. Skipping does not create a timer.</p>
+      </section>
+
+      <section id="ref">
+        <h2><span class="num">9</span> Short reference</h2>
+        <table>
+          <thead><tr><th>Gesture</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Click the hourglass</td><td>Open / close the list</td></tr>
+            <tr><td>Drag down, release</td><td>Save window → new timer</td></tr>
+            <tr><td>Drag onto the trash</td><td>Cancel</td></tr>
+            <tr><td>Click an Active row</td><td>Edit name and duration</td></tr>
+            <tr><td>Right-click</td><td>Settings, tour, Quit</td></tr>
+            <tr><td>Esc while pulling</td><td>Cancel the pull</td></tr>
+          </tbody>
+        </table>
+        <p class="fine">macOS 13+, Apple silicon and Intel, Free</p>
+      </section>
+    </article>
+  </div>
+
+  <footer>
+    <a href="index.html">PullTimer</a>
+    <a href="GUIDE.md">GUIDE.md</a>
+  </footer>
+</body>
+</html>

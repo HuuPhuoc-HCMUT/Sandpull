@@ -2,6 +2,23 @@ import AppKit
 import SwiftUI
 
 @MainActor
+enum AppFocus {
+    static func grab(_ window: NSWindow? = nil) {
+        NSApp.activate(ignoringOtherApps: true)
+        window?.acceptsMouseMovedEvents = true
+        window?.makeKey()
+    }
+}
+
+/// Makes the host window key as soon as it appears so hover/cursor work without a background click.
+final class KeyOnAppearHostingController<Content: View>: NSHostingController<Content> {
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        AppFocus.grab(view.window)
+    }
+}
+
+@MainActor
 final class FloatingWindow: NSWindow {
     init<Content: View>(view: Content) {
         super.init(
@@ -15,9 +32,10 @@ final class FloatingWindow: NSWindow {
         isOpaque = false
         hasShadow = false
         isMovableByWindowBackground = true
+        acceptsMouseMovedEvents = true
         level = .floating
 
-        let hosting = NSHostingController(rootView: view)
+        let hosting = KeyOnAppearHostingController(rootView: view)
         hosting.sizingOptions = [.preferredContentSize]
         contentViewController = hosting
     }
@@ -25,31 +43,52 @@ final class FloatingWindow: NSWindow {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
 
+    func showBelow(_ point: NSPoint) {
+        prepareChrome()
+        var origin = NSPoint(
+            x: point.x - frame.width / 2,
+            y: point.y - frame.height - 10
+        )
+        origin = clamped(origin)
+        present(at: origin)
+    }
+
     // Center of window lands at releasePoint
     func showAt(releasePoint: NSPoint) {
-        contentView?.wantsLayer = true
-        contentView?.layer?.cornerRadius = 13
-        contentView?.layer?.masksToBounds = true
-
-        if let sz = contentViewController?.preferredContentSize, sz.height > 10 {
-            setContentSize(sz)
-        }
-
+        prepareChrome()
         var origin = NSPoint(
             x: releasePoint.x - frame.width / 2,
             y: releasePoint.y - frame.height / 2
         )
-        if let screen = NSScreen.main {
-            let vis = screen.visibleFrame
-            origin.x = min(max(origin.x, vis.minX + 8), vis.maxX - frame.width - 8)
-            origin.y = min(max(origin.y, vis.minY + 8), vis.maxY - frame.height - 8)
-        }
-        setFrameOrigin(origin)
+        origin = clamped(origin)
+        present(at: origin)
+    }
 
+    private func prepareChrome() {
+        contentView?.wantsLayer = true
+        contentView?.layer?.cornerRadius = 13
+        contentView?.layer?.masksToBounds = true
+        if let sz = contentViewController?.preferredContentSize, sz.height > 10 {
+            setContentSize(sz)
+        }
+    }
+
+    private func clamped(_ origin: NSPoint) -> NSPoint {
+        guard let screen = NSScreen.main else { return origin }
+        let vis = screen.visibleFrame
+        return NSPoint(
+            x: min(max(origin.x, vis.minX + 8), vis.maxX - frame.width - 8),
+            y: min(max(origin.y, vis.minY + 8), vis.maxY - frame.height - 8)
+        )
+    }
+
+    private func present(at origin: NSPoint) {
+        setFrameOrigin(origin)
         alphaValue = 0
         contentView?.layer?.setAffineTransform(CGAffineTransform(scaleX: 0.82, y: 0.82))
-        makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+        makeKeyAndOrderFront(nil)
+        AppFocus.grab(self)
 
         NSAnimationContext.runAnimationGroup({ ctx in
             ctx.duration = 0.13

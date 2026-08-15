@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PullTimer: set a timer by pulling down</title>
+  <meta name="description" content="A macOS menu bar timer. Drag the hourglass to choose a time, name it, and let the sand run. No Dock. No clutter.">
+  <meta property="og:title" content="PullTimer">
+  <meta property="og:description" content="Set a timer by pulling down from the Mac menu bar.">
+  <meta property="og:image" content="assets/hero-desk.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/app-icon-256.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="#top">
+      <img src="assets/app-icon-256.png" width="36" height="36" alt="">
+      <span>PullTimer</span>
+    </a>
+    <nav>
+      <a href="#try">Try it</a>
+      <a class="keep" href="guide.html">Guide</a>
+      <a href="downloads/PullTimer.dmg" class="nav-cta" download>Download</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">macOS 13+  Menu bar  Free</p>
+        <h1>Set a timer by<br>pulling down.</h1>
+        <p class="lede">An hourglass in the menu bar. Drag to choose a time, name it, and get back to work. No Dock icon. No extra window until you want one.</p>
+        <div class="hero-actions">
+          <a class="btn-save" href="downloads/PullTimer.dmg" download>Download for Mac</a>
+          <a class="btn-quiet" href="#try">Pull it in the browser</a>
+        </div>
+        <p class="fine">Apple silicon and Intel, macOS Ventura or later</p>
+      </div>
+
+      <figure class="film" aria-label="Product demo">
+        <div class="film-stage" id="film">
+          <div class="desktop">
+            <div class="menubar">
+              <span class="apple" aria-hidden="true"></span>
+              <span class="mb-app">Finder</span>
+              <span class="mb-spacer"></span>
+              <span class="mb-clock" id="filmClock">16:39</span>
+              <span class="status-icon" id="filmIcon">
+                <svg class="hg" viewBox="0 0 42 42" aria-hidden="true"><use href="#hourglass"></use></svg>
+                <span class="status-time" id="filmStatus"></span>
+              </span>
+            </div>
+            <div class="film-play" id="filmPlay">
+              <div class="line" id="filmLine"></div>
+              <div class="glass" id="filmGlass">
+                <svg class="hg lg" viewBox="0 0 42 42"><use href="#hourglass"></use></svg>
+              </div>
+              <div class="bubble" id="filmBubble">
+                <strong id="filmMins">25 min</strong>
+                <span id="filmEnd">17:04</span>
+              </div>
+              <div class="cursor" id="filmCursor"></div>
+              <div class="save-panel" id="filmSave">
+                <div class="save-head">
+                  <h3 id="filmVerbose">25 minutes</h3>
+                  <div class="save-meta"><span>25m</span><span id="filmSaveEnd">17:04</span></div>
+                  <div class="slider"><i style="width:42%"></i></div>
+                  <div class="chips">
+                    <span>5m</span><span>10m</span><span class="on">15m</span><span>30m</span><span>1h</span>
+                  </div>
+                </div>
+                <div class="save-label">
+                  <p>Label</p>
+                  <div class="chips"><span>Focus</span><span>Break</span></div>
+                  <div class="field" id="filmField"><span id="filmTyped"></span><i class="caret"></i></div>
+                </div>
+                <div class="save-foot">
+                  <span class="cancel">Cancel</span>
+                  <span class="save" id="filmSaveBtn">Save</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption>
+          <button type="button" class="film-toggle" id="filmToggle" aria-pressed="true">Pause</button>
+          <span>Drag, name, save. The real flow.</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="try" id="try">
+      <div class="section-copy">
+        <p class="eyebrow">Interactive</p>
+        <h2>Pull the hourglass.</h2>
+        <p>Same gesture as the app. Drag down to pick a time. Quarter-hours glow sand. Release to name it.</p>
+      </div>
+      <div class="try-stage" id="tryStage">
+        <div class="desktop">
+          <div class="menubar">
+            <span class="apple" aria-hidden="true"></span>
+            <span class="mb-app">PullTimer</span>
+            <span class="mb-spacer"></span>
+            <span class="hint" id="tryHint">Drag the hourglass down</span>
+            <button type="button" class="status-icon live" id="tryIcon" aria-label="Drag to set a timer">
+              <svg class="hg" viewBox="0 0 42 42"><use href="#hourglass"></use></svg>
+            </button>
+          </div>
+          <div class="try-canvas" id="tryCanvas">
+            <div class="line" id="tryLine"></div>
+            <div class="glass" id="tryGlass">
+              <svg class="hg lg" viewBox="0 0 42 42"><use href="#hourglass"></use></svg>
+            </div>
+            <div class="bubble" id="tryBubble">
+              <strong id="tryMins">15 min</strong>
+              <span id="tryEnd"></span>
+            </div>
+            <div class="save-panel" id="trySave">
+              <div class="save-head">
+                <h3 id="tryVerbose">15 minutes</h3>
+                <div class="save-meta"><span id="tryShort">15m</span><span id="trySaveEnd"></span></div>
+                <div class="slider"><i id="trySlider"></i></div>
+                <div class="chips">
+                  <button type="button" data-mins="5">5m</button>
+                  <button type="button" data-mins="10">10m</button>
+                  <button type="button" data-mins="15">15m</button>
+                  <button type="button" data-mins="30">30m</button>
+                  <button type="button" data-mins="60">1h</button>
+                </div>
+              </div>
+              <div class="save-label">
+                <p>Label</p>
+                <div class="chips">
+                  <button type="button" data-label="Focus">Focus</button>
+                  <button type="button" data-label="Break">Break</button>
+                </div>
+                <input id="tryField" class="field-input" type="text" placeholder="or type your own…" maxlength="40" autocomplete="off">
+              </div>
+              <div class="save-foot">
+                <button type="button" class="cancel" id="tryCancel">Cancel</button>
+                <button type="button" class="save" id="tryAdd">Save</button>
+              </div>
+            </div>
+            <div class="list-panel" id="tryList" hidden>
+              <p class="list-kicker">Active</p>
+              <div id="tryRows"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <article class="feature">
+        <div class="feature-text">
+          <p class="eyebrow">The pull</p>
+          <h2>Further down,<br>longer timer.</h2>
+          <p>A teal line follows your cursor. The hourglass turns as sand shifts. End times on the clock (:00, :15, :30, :45) click into place.</p>
+        </div>
+        <figure>
+          <img src="assets/feature-drag.png" alt="Dragging the hourglass down from the Mac menu bar to set 25 minutes" width="1600" height="900">
+        </figure>
+      </article>
+
+      <article class="feature flip">
+        <div class="feature-text">
+          <p class="eyebrow">The name</p>
+          <h2>Release, then call it something.</h2>
+          <p>Letting go opens the save window, not the timer list. Slide the time, tap a label, or type your own. Save creates a real timer.</p>
+        </div>
+        <figure>
+          <img src="assets/feature-save.png" alt="Save window with duration slider, label chips, and a teal Save button" width="1600" height="1200">
+        </figure>
+      </article>
+
+      <article class="feature">
+        <div class="feature-text">
+          <p class="eyebrow">The list</p>
+          <h2>Active now.<br>Done when it rings.</h2>
+          <p>Click the icon for the list. Live countdown pills sit on every running timer. Finished ones wait under Done until you clear them.</p>
+        </div>
+        <figure>
+          <img src="assets/feature-list.png" alt="Timer list with Active countdowns and a Done section" width="1600" height="1200">
+        </figure>
+      </article>
+    </section>
+
+    <section class="steps" id="how">
+      <div class="section-copy">
+        <p class="eyebrow">How it works</p>
+        <h2>Four moves. That’s the whole app.</h2>
+        <p><a href="guide.html">Read the full guide</a> for the list, expiry, settings, and the written tour.</p>
+      </div>
+      <ol class="step-grid">
+        <li>
+          <span class="num">1</span>
+          <h3>Watch the hourglass</h3>
+          <p>It lives in the menu bar. The sand falls while a timer runs. Nothing else in the Dock or Cmd-Tab.</p>
+        </li>
+        <li>
+          <span class="num">2</span>
+          <h3>Drag down</h3>
+          <p>The line grows. Quarter-hours click. Drag onto the trash if you change your mind.</p>
+        </li>
+        <li>
+          <span class="num">3</span>
+          <h3>Release to name it</h3>
+          <p>The save window opens under the icon: duration, labels, Save. Same window as in the app.</p>
+        </li>
+        <li>
+          <span class="num">4</span>
+          <h3>Let it run</h3>
+          <p>The menu bar counts down. When time’s up, PullTimer keeps the timer and asks what next.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="still">
+      <img src="assets/hero-desk.png" alt="A MacBook on a wooden desk with PullTimer’s hourglass on screen" width="1600" height="900">
+    </section>
+
+    <section class="download" id="download">
+      <img class="dl-icon" src="assets/app-icon.png" width="1024" height="1024" alt="PullTimer">
+      <h2>Free on the Mac.<br>Stays in the menu bar.</h2>
+      <p>macOS 13 Ventura or later. Drag to install, then pull.</p>
+      <a class="btn-save lg" href="downloads/PullTimer.dmg" download>Download PullTimer.dmg</a>
+      <p class="fine">Version 1.0, macOS 13 or later. Open the disk image, drag PullTimer into Applications. If macOS blocks it, right-click the app and choose Open.</p>
+    </section>
+  </main>
+
+  <footer>
+    <span>PullTimer</span>
+    <a href="guide.html">Guide</a>
+  </footer>
+
+  <svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true">
+    <symbol id="hourglass" viewBox="0 0 42 42">
+      <path d="M9 6h24L23.3 21H18.7L9 6Z" fill="#c5d8db" stroke="#2f7d8a" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M9 36h24L23.3 21H18.7L9 36Z" fill="#c5d8db" stroke="#2f7d8a" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M12 8h18L21 20Z" fill="#c49a4a"/>
+      <path d="M11 35h20L21 25Z" fill="#c49a4a"/>
+      <rect x="7" y="4" width="28" height="3.2" rx="1" fill="#8a6420"/>
+      <rect x="7" y="34.8" width="28" height="3.2" rx="1" fill="#8a6420"/>
+    </symbol>
+  </svg>
+
+  <script src="app.js"></script>
+</body>
+</html>

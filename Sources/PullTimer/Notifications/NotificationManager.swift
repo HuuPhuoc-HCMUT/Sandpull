@@ -44,7 +44,21 @@ final class NotificationManager: NSObject, @unchecked Sendable {
         }
     }
 
-    // MARK: - Schedule system notification (fires even if app is killed)
+    /// Wipe banners left in Notification Center from earlier runs.
+    func clearDelivered() {
+        let center = UNUserNotificationCenter.current()
+        center.removeAllDeliveredNotifications()
+        center.setBadgeCount(0)
+    }
+
+    // MARK: - Schedule system notification (backup if the app is killed)
+    //
+    // Accessory / menu-bar apps are usually not "foreground", so willPresent
+    // never runs and a trigger at endAt would show a system banner next to
+    // our in-app popup. Fire a few seconds later; while we are alive, tick()
+    // cancels this request first.
+
+    private static let backupDelay: TimeInterval = 3
 
     func schedule(for item: TimerItem) {
         let content = UNMutableNotificationContent()
@@ -53,11 +67,9 @@ final class NotificationManager: NSObject, @unchecked Sendable {
         if UserDefaults.standard.notificationSoundEnabled {
             content.sound = .default
         }
-        // .timeSensitive bypasses Focus Mode but needs entitlement with real signing.
-        // Use .active for ad-hoc builds — still fires, just won't break Focus.
         content.interruptionLevel = .active
 
-        let interval = max(1, item.remaining)
+        let interval = max(1, item.remaining + Self.backupDelay)
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
         let request = UNNotificationRequest(
             identifier: item.notificationID,
@@ -88,8 +100,9 @@ final class NotificationManager: NSObject, @unchecked Sendable {
 
     func cancel(id: UUID) {
         let ids = [id.uuidString, "expiry-\(id.uuidString)"]
-        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: ids)
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
+        let center = UNUserNotificationCenter.current()
+        center.removeDeliveredNotifications(withIdentifiers: ids)
+        center.removePendingNotificationRequests(withIdentifiers: ids)
     }
 }
 
@@ -99,8 +112,11 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         willPresent notification: UNNotification,
         withCompletionHandler handler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        // Show banner when app is foreground; sound is controlled above via NSSound
-        handler([.banner, .badge])
+        // App is alive — swallow the system banner. Also drop it from
+        // Notification Center in case delivery already happened.
+        let id = notification.request.identifier
+        center.removeDeliveredNotifications(withIdentifiers: [id])
+        handler([])
     }
 
     func userNotificationCenter(
