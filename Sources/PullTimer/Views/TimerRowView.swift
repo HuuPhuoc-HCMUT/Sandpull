@@ -25,10 +25,10 @@ struct TimerRowView: View {
             // Badge — fixed 80×26, never resizes
             ZStack {
                 Capsule()
-                    .fill(Color.purple.opacity(0.15))
-                Text(item.formattedRemaining)
+                    .fill(item.isExpired ? Theme.sand.opacity(0.22) : Theme.accent.opacity(0.15))
+                Text(item.isExpired ? "Done" : item.formattedRemaining)
                     .font(.system(size: 11, weight: .medium).monospacedDigit())
-                    .foregroundStyle(Color.purple)
+                    .foregroundStyle(item.isExpired ? Theme.sandDeep : Theme.accent)
                     .lineLimit(1)
                     .contentTransition(.numericText(countsDown: true))
                     .animation(.easeInOut(duration: 0.25), value: item.formattedRemaining)

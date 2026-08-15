@@ -11,6 +11,7 @@ final class StatusBarController: NSObject {
 
     private var saveWindow: FloatingWindow?
     private var settingsWindow: FloatingWindow?
+    private var expiryWindow: FloatingWindow?
     private var cancellables = Set<AnyCancellable>()
     private weak var statusButton: NSStatusBarButton?
     private var popoverCloseMonitor: Any?   // global monitor to dismiss on outside click
@@ -27,6 +28,12 @@ final class StatusBarController: NSObject {
         setupPopover()
         observeStore()
         observeTimerExpiry()
+        observeOpenTimerList()
+        if NotificationManager.shared.consumePendingOpenList() {
+            DispatchQueue.main.async { [weak self] in
+                self?.showTimerList()
+            }
+        }
     }
 
     // MARK: - Setup
@@ -42,7 +49,9 @@ final class StatusBarController: NSObject {
     }
 
     private func setupPopover() {
-        let listView = TimerListView(store: store)
+        let listView = TimerListView(store: store, onAdd: { [weak self] in
+            self?.addTimerFromButton()
+        })
         // Use .applicationDefined so we control dismiss manually via global monitor
         popover.contentViewController = NSHostingController(rootView: listView)
         popover.behavior = .applicationDefined
@@ -60,8 +69,22 @@ final class StatusBarController: NSObject {
     private func observeTimerExpiry() {
         NotificationCenter.default.addObserver(
             forName: .timerExpired, object: nil, queue: .main
+        ) { [weak self] notification in
+            let item = notification.object as? TimerItem
+            Task { @MainActor [weak self] in
+                guard let self, let item else { return }
+                self.showExpiryPopup(for: item)
+            }
+        }
+    }
+
+    private func observeOpenTimerList() {
+        NotificationCenter.default.addObserver(
+            forName: .openTimerList, object: nil, queue: .main
         ) { [weak self] _ in
-            Task { @MainActor [weak self] in self?.flashBadge() }
+            Task { @MainActor [weak self] in
+                self?.showTimerList()
+            }
         }
     }
 
@@ -75,9 +98,11 @@ final class StatusBarController: NSObject {
             NSMenu.popUpContextMenu(makeContextMenu(), with: event, for: sender)
 
         case .leftMouseDown:
-            // Close any stale save window immediately
+            // Close any stale floating windows immediately
             saveWindow?.close()
             saveWindow = nil
+            expiryWindow?.close()
+            expiryWindow = nil
 
             // Snapshot intent before entering the tracking loop
             let wasOpen = isPopoverOpen
@@ -105,17 +130,6 @@ final class StatusBarController: NSObject {
     private func trackDrag(from iconScreenPoint: NSPoint, wasPopoverOpen: Bool) {
         var isDragging = false
         let screenHeight = NSScreen.main?.frame.height ?? 900
-        let provider = AppleCalendarProvider.shared
-
-        // Prefetch calendar events in the background before the drag loop begins.
-        // eventsStartingNow() reads only the in-memory cache — zero latency per frame.
-        // If not authorized, request permission first then prefetch.
-        Task {
-            if !provider.isAuthorized {
-                _ = await provider.requestAccess()
-            }
-            await provider.prefetch(horizon: 24 * 3600)
-        }
 
         while true {
             guard let event = NSApp.nextEvent(
@@ -146,13 +160,6 @@ final class StatusBarController: NSObject {
                     NSRect(origin: current, size: .zero)
                 ).origin
 
-                // Compute timeline markers — reads from in-memory cache, zero I/O
-                let duration = DurationMapper.toDuration(pixels: dist, screenHeight: screenHeight)
-                overlayWindow.overlayView.markers = TimelineMapper.markers(
-                    events: provider.eventsStartingNow(within: 24 * 3600),
-                    dragDuration: duration
-                )
-
                 overlayWindow.overlayView.updateDrag(
                     from: originWin,
                     to: currentWin,
@@ -164,7 +171,6 @@ final class StatusBarController: NSObject {
                 let finalDistance = overlayWindow.overlayView.dragDistance
                 overlayWindow.overlayView.resetDrag()
                 overlayWindow.hide()
-                provider.clearCache()
 
                 if inCancelZone {
                     // User dragged into cancel zone — discard silently
@@ -270,26 +276,55 @@ final class StatusBarController: NSObject {
     }
 
     private func makeMenuBarIcon() -> NSImage {
-        // Show a dot badge when timers are active so user knows something is running
-        if store.items.isEmpty {
-            let img = NSImage(systemSymbolName: "timer", accessibilityDescription: "PullTimer") ?? NSImage()
-            img.isTemplate = true
-            return img
-        } else {
-            // Filled timer icon to indicate active timers
-            let cfg = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
-            let img = NSImage(systemSymbolName: "timer", variableValue: 1.0, accessibilityDescription: "PullTimer")?
-                .withSymbolConfiguration(cfg) ?? NSImage()
-            img.isTemplate = true
-            return img
+        MenuBarIcon.image(active: !store.items.isEmpty)
+    }
+
+    func showTimerList() {
+        expiryWindow?.close()
+        expiryWindow = nil
+        saveWindow?.close()
+        saveWindow = nil
+        guard let button = statusButton else { return }
+        if !isPopoverOpen {
+            openPopover(button)
         }
     }
 
-    private func flashBadge() {
-        // Brief visual pulse — no-op since icon is now static
+    // MARK: - Expiry Popup
+
+    private func showExpiryPopup(for item: TimerItem) {
+        expiryWindow?.close()
+        expiryWindow = nil
+
+        let view = ExpiryPopupView(item: item) { [weak self] in
+            self?.showTimerList()
+        } onDismiss: { [weak self] in
+            self?.expiryWindow?.close()
+            self?.expiryWindow = nil
+        }
+        let window = FloatingWindow(view: view)
+        expiryWindow = window
+        if let screen = NSScreen.main {
+            let x = screen.frame.midX
+            let y = screen.visibleFrame.midY + 80
+            window.showAt(releasePoint: NSPoint(x: x, y: y))
+        } else {
+            window.showAt(releasePoint: .zero)
+        }
     }
 
     // MARK: - Save Window
+
+    private func addTimerFromButton() {
+        closePopover()
+        var point: NSPoint?
+        if let button = statusButton, let window = button.window {
+            let bounds = button.convert(button.bounds, to: nil)
+            let screen = window.convertToScreen(bounds)
+            point = NSPoint(x: screen.midX, y: screen.minY - 12)
+        }
+        showSaveWindow(duration: 15 * 60, near: point)
+    }
 
     private func showSaveWindow(duration: TimeInterval, near point: NSPoint?) {
         saveWindow?.close()

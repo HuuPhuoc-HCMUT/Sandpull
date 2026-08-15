@@ -7,15 +7,11 @@ final class DragOverlayView: NSView {
     private var currentPoint: NSPoint = .zero
     private var screenHeight: CGFloat = 900
 
-    var markers: [TimelineMarker] = []
-
     // MARK: - Trash Can
 
-    private let trashShowThreshold: CGFloat = 600   // overridden per-frame via screenHeight
     private var trashShowDistance: CGFloat { max(400, screenHeight / 2) }
-    private let trashCancelThreshold: CGFloat = 58  // within this = cancel zone
+    private let trashCancelThreshold: CGFloat = 58
 
-    // Center of trash can: horizontally centered, just above the Dock
     private var trashCanCenter: NSPoint {
         let dockTop = NSScreen.main?.visibleFrame.minY ?? 72
         return NSPoint(x: bounds.width / 2, y: dockTop + 52)
@@ -27,7 +23,6 @@ final class DragOverlayView: NSView {
         return sqrt(dx * dx + dy * dy)
     }
 
-    // 0 = invisible, 1.0 = base size, >1 = enlarged near cancel
     private var trashScale: CGFloat {
         guard !DurationMapper.isInDeadZone(dragDistance) else { return 0 }
         let d = trashDistance
@@ -40,6 +35,15 @@ final class DragOverlayView: NSView {
 
     var isInCancelZone: Bool {
         !DurationMapper.isInDeadZone(dragDistance) && trashDistance < trashCancelThreshold
+    }
+
+    private var hourglassRotation: CGFloat {
+        dragDistance * 0.026
+    }
+
+    private var sandProgress: CGFloat {
+        let usable = max(400, screenHeight - 24) - DurationMapper.deadZone
+        return min(1, max(0, (dragDistance - DurationMapper.deadZone) / usable))
     }
 
     // MARK: - API
@@ -56,7 +60,6 @@ final class DragOverlayView: NSView {
 
     func resetDrag() {
         dragDistance = 0
-        markers = []
         needsDisplay = true
     }
 
@@ -72,14 +75,18 @@ final class DragOverlayView: NSView {
 
         if !inDeadZone {
             if !inCancel {
-                if !markers.isEmpty { drawMarkers() }
                 drawBubble()
             }
-            drawEndDot(faded: inCancel)
+            drawHourglass(
+                at: dragEndPoint,
+                faded: inCancel,
+                rotation: hourglassRotation,
+                progress: sandProgress
+            )
             let s = trashScale
             if s > 0.01 { drawTrashCan(scale: s) }
         } else {
-            drawEndDot(faded: true)
+            drawHourglass(at: dragEndPoint, faded: true, rotation: hourglassRotation * 0.35, progress: 0)
         }
     }
 
@@ -93,13 +100,135 @@ final class DragOverlayView: NSView {
         path.line(to: dragEndPoint)
         path.lineCapStyle = .round
 
-        let alpha: CGFloat = faded ? 0.25 : 0.9
-        NSColor.systemPurple.withAlphaComponent(alpha * 0.25).setStroke()
-        path.lineWidth = 5
+        let alpha: CGFloat = faded ? 0.22 : 0.9
+        Theme.NS.sand.withAlphaComponent(alpha * 0.22).setStroke()
+        path.lineWidth = 6
         path.stroke()
-        NSColor.systemPurple.withAlphaComponent(alpha).setStroke()
+        Theme.NS.teal.withAlphaComponent(alpha).setStroke()
         path.lineWidth = 2
         path.stroke()
+    }
+
+    // MARK: - Hourglass
+
+    private func drawHourglass(at center: NSPoint, faded: Bool, rotation: CGFloat, progress: CGFloat) {
+        let alpha: CGFloat = faded ? 0.28 : 1.0
+        let size: CGFloat = faded ? 30 : 38
+
+        NSGraphicsContext.current?.saveGraphicsState()
+        let transform = NSAffineTransform()
+        transform.translateX(by: center.x, yBy: center.y)
+        transform.rotate(byRadians: rotation)
+        transform.concat()
+
+        drawSpinRing(size: size, rotation: rotation, alpha: alpha)
+        drawHourglassBody(size: size, progress: progress, alpha: alpha)
+
+        NSGraphicsContext.current?.restoreGraphicsState()
+    }
+
+    private func drawSpinRing(size: CGFloat, rotation: CGFloat, alpha: CGFloat) {
+        let radius = size * 0.78
+        let start = CGFloat(rotation) * 180 / .pi
+        let ring = NSBezierPath()
+        ring.appendArc(
+            withCenter: .zero,
+            radius: radius,
+            startAngle: start,
+            endAngle: start + 250,
+            clockwise: false
+        )
+        ring.lineWidth = 1.4
+        ring.lineCapStyle = .round
+        Theme.NS.glass.withAlphaComponent(0.55 * alpha).setStroke()
+        ring.stroke()
+
+        let beadAngle = (start + 250) * .pi / 180
+        let bead = NSPoint(x: cos(beadAngle) * radius, y: sin(beadAngle) * radius)
+        let beadR: CGFloat = 2.2
+        Theme.NS.sand.withAlphaComponent(0.95 * alpha).setFill()
+        NSBezierPath(ovalIn: NSRect(x: bead.x - beadR, y: bead.y - beadR, width: beadR * 2, height: beadR * 2)).fill()
+    }
+
+    private func drawHourglassBody(size: CGFloat, progress: CGFloat, alpha: CGFloat) {
+        let halfW = size * 0.28
+        let halfH = size * 0.38
+        let waist: CGFloat = size * 0.055
+
+        let top = NSBezierPath()
+        top.move(to: NSPoint(x: -halfW, y: halfH))
+        top.line(to: NSPoint(x: halfW, y: halfH))
+        top.line(to: NSPoint(x: waist, y: 0))
+        top.line(to: NSPoint(x: -waist, y: 0))
+        top.close()
+
+        let bottom = NSBezierPath()
+        bottom.move(to: NSPoint(x: -halfW, y: -halfH))
+        bottom.line(to: NSPoint(x: halfW, y: -halfH))
+        bottom.line(to: NSPoint(x: waist, y: 0))
+        bottom.line(to: NSPoint(x: -waist, y: 0))
+        bottom.close()
+
+        Theme.NS.glass.withAlphaComponent(0.22 * alpha).setFill()
+        top.fill()
+        bottom.fill()
+
+        let topSand = min(1, max(0, 1 - progress))
+        if topSand > 0.04 {
+            NSGraphicsContext.current?.saveGraphicsState()
+            top.addClip()
+            let sandTop = halfH - (halfH * (1 - topSand) * 0.72)
+            let sand = NSBezierPath()
+            sand.move(to: NSPoint(x: -halfW, y: sandTop))
+            sand.line(to: NSPoint(x: halfW, y: sandTop))
+            sand.line(to: NSPoint(x: 0, y: 0))
+            sand.close()
+            Theme.NS.sand.withAlphaComponent(0.92 * alpha).setFill()
+            sand.fill()
+            NSGraphicsContext.current?.restoreGraphicsState()
+        }
+
+        let bottomSand = min(1, max(0, progress))
+        if bottomSand > 0.04 {
+            NSGraphicsContext.current?.saveGraphicsState()
+            bottom.addClip()
+            let rise = halfH * bottomSand * 0.78
+            let sand = NSBezierPath()
+            sand.move(to: NSPoint(x: -halfW, y: -halfH))
+            sand.line(to: NSPoint(x: halfW, y: -halfH))
+            sand.line(to: NSPoint(x: 0, y: -halfH + rise))
+            sand.close()
+            Theme.NS.sand.withAlphaComponent(0.95 * alpha).setFill()
+            sand.fill()
+            NSGraphicsContext.current?.restoreGraphicsState()
+        }
+
+        Theme.NS.teal.withAlphaComponent(0.85 * alpha).setStroke()
+        top.lineWidth = 1.6
+        top.lineJoinStyle = .round
+        top.stroke()
+        bottom.lineWidth = 1.6
+        bottom.lineJoinStyle = .round
+        bottom.stroke()
+
+        Theme.NS.glass.withAlphaComponent(0.7 * alpha).setStroke()
+        let highlight = NSBezierPath()
+        highlight.move(to: NSPoint(x: -halfW + 1.5, y: halfH - 1))
+        highlight.line(to: NSPoint(x: -waist - 0.4, y: 2))
+        highlight.lineWidth = 1
+        highlight.lineCapStyle = .round
+        highlight.stroke()
+
+        let capW = halfW * 2 + 3
+        let capH: CGFloat = 3.2
+        Theme.NS.brass.withAlphaComponent(alpha).setFill()
+        NSBezierPath(roundedRect: NSRect(x: -capW / 2, y: halfH - 0.4, width: capW, height: capH),
+                     xRadius: 1, yRadius: 1).fill()
+        NSBezierPath(roundedRect: NSRect(x: -capW / 2, y: -halfH - capH + 0.4, width: capW, height: capH),
+                     xRadius: 1, yRadius: 1).fill()
+        Theme.NS.sandLight.withAlphaComponent(0.55 * alpha).setFill()
+        NSBezierPath(roundedRect: NSRect(x: -capW / 2 + 1, y: halfH + 1.1, width: capW - 2, height: 1.1),
+                     xRadius: 0.4, yRadius: 0.4).fill()
     }
 
     // MARK: - Trash Can
@@ -109,26 +238,23 @@ final class DragOverlayView: NSView {
         let inCancel = isInCancelZone
         let alpha = min(1.0, (scale - 0.7) / 0.4 + 0.5)
 
-        // Outer glow / background circle
         let bgR: CGFloat = 28 * scale
         let bgRect = NSRect(x: center.x - bgR, y: center.y - bgR,
                             width: bgR * 2, height: bgR * 2)
         let bgPath = NSBezierPath(ovalIn: bgRect)
         let bgColor: NSColor = inCancel
             ? NSColor.systemRed.withAlphaComponent(0.22 * alpha)
-            : NSColor.white.withAlphaComponent(0.1 * alpha)
+            : Theme.NS.glassDark.withAlphaComponent(0.35 * alpha)
         bgColor.setFill()
         bgPath.fill()
 
-        // Border ring — subtle
         let ringColor: NSColor = inCancel
             ? NSColor.systemRed.withAlphaComponent(0.5 * alpha)
-            : NSColor.white.withAlphaComponent(0.2 * alpha)
+            : Theme.NS.teal.withAlphaComponent(0.35 * alpha)
         ringColor.setStroke()
         bgPath.lineWidth = 1
         bgPath.stroke()
 
-        // SF Symbol icon, tinted
         let pointSize: CGFloat = 20 * scale
         let cfg = NSImage.SymbolConfiguration(pointSize: pointSize, weight: .medium)
         let symbolName = inCancel ? "trash.fill" : "trash"
@@ -138,9 +264,8 @@ final class DragOverlayView: NSView {
 
         let tintColor: NSColor = inCancel
             ? NSColor.systemRed.withAlphaComponent(alpha)
-            : NSColor.white.withAlphaComponent(0.85 * alpha)
+            : Theme.NS.sandLight.withAlphaComponent(0.9 * alpha)
 
-        // Tint the template image by drawing color over it with sourceAtop
         let tinted = NSImage(size: baseImg.size, flipped: false) { rect in
             baseImg.draw(in: rect)
             tintColor.set()
@@ -154,7 +279,6 @@ final class DragOverlayView: NSView {
                              width: imgSize.width, height: imgSize.height)
         tinted.draw(in: imgRect, from: .zero, operation: .sourceOver, fraction: 1.0)
 
-        // "Release to cancel" label — only in cancel zone
         if inCancel {
             let font = NSFont.systemFont(ofSize: 11, weight: .medium)
             let attrs: [NSAttributedString.Key: Any] = [
@@ -168,118 +292,7 @@ final class DragOverlayView: NSView {
         }
     }
 
-    // MARK: - Markers
-
-    private func drawMarkers() {
-        let bubbleRect = computeBubbleRect()
-        for marker in markers {
-            let pt = pointOnLine(at: marker.position)
-            drawDiamond(at: pt, isWarning: marker.isWarning)
-            drawMarkerLabel(marker, at: pt, avoidRect: bubbleRect)
-        }
-    }
-
-    private func pointOnLine(at position: CGFloat) -> NSPoint {
-        let dx = dragEndPoint.x - originPoint.x
-        let dy = dragEndPoint.y - originPoint.y
-        return NSPoint(x: originPoint.x + dx * position,
-                       y: originPoint.y + dy * position)
-    }
-
-    private func drawDiamond(at center: NSPoint, isWarning: Bool) {
-        let s: CGFloat = 6
-        let path = NSBezierPath()
-        path.move(to: NSPoint(x: center.x,     y: center.y + s))
-        path.line(to: NSPoint(x: center.x + s, y: center.y))
-        path.line(to: NSPoint(x: center.x,     y: center.y - s))
-        path.line(to: NSPoint(x: center.x - s, y: center.y))
-        path.close()
-        let color: NSColor = isWarning ? .systemOrange : .systemYellow
-        color.setFill()
-        path.fill()
-        NSColor.white.withAlphaComponent(0.85).setStroke()
-        path.lineWidth = 1.5
-        path.stroke()
-    }
-
-    private func drawMarkerLabel(_ marker: TimelineMarker, at pt: NSPoint, avoidRect: NSRect?) {
-        let font = NSFont.systemFont(ofSize: 11, weight: .medium)
-        let label = "\(marker.time) • \(marker.title)"
-        let attrs: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: NSColor.white]
-        let str = NSAttributedString(string: label, attributes: attrs)
-        let s = str.size()
-
-        let hPad: CGFloat = 8, vPad: CGFloat = 5
-        let lW = s.width + hPad * 2
-        let lH = s.height + vPad * 2
-        let diamondGap: CGFloat = 10
-
-        var lX = pt.x + diamondGap
-        let lY = pt.y - lH / 2
-
-        let rightRect = NSRect(x: lX, y: lY, width: lW, height: lH)
-        let wouldOverflow = lX + lW > bounds.width - 8
-        let wouldHitBubble = avoidRect.map { rightRect.intersects($0) } ?? false
-        if wouldOverflow || wouldHitBubble {
-            lX = pt.x - diamondGap - lW
-        }
-
-        let labelRect = NSRect(x: lX, y: lY, width: lW, height: lH)
-
-        let shadow = NSShadow()
-        shadow.shadowColor = NSColor.black.withAlphaComponent(0.4)
-        shadow.shadowBlurRadius = 8
-        shadow.shadowOffset = NSSize(width: 0, height: -2)
-        shadow.set()
-
-        let bg = NSBezierPath(roundedRect: labelRect, xRadius: 5, yRadius: 5)
-        NSColor(calibratedRed: 0.1, green: 0.1, blue: 0.12, alpha: 0.85).setFill()
-        bg.fill()
-        NSShadow().set()
-
-        str.draw(at: NSPoint(x: lX + hPad, y: lY + vPad))
-    }
-
-    // MARK: - End Dot
-
-    private func drawEndDot(faded: Bool) {
-        let c = dragEndPoint
-        let r: CGFloat = faded ? 5 : 7
-        let rect = NSRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2)
-        let dot = NSBezierPath(ovalIn: rect)
-        let alpha: CGFloat = faded ? 0.25 : 1.0
-        NSColor.systemPurple.withAlphaComponent(alpha).setFill()
-        dot.fill()
-        NSColor.white.withAlphaComponent(faded ? 0.4 : 0.95).setStroke()
-        dot.lineWidth = faded ? 1 : 2
-        dot.stroke()
-    }
-
     // MARK: - Bubble
-
-    private func computeBubbleRect() -> NSRect {
-        let duration = DurationMapper.toDuration(pixels: dragDistance, screenHeight: screenHeight)
-        let endDate = Date().addingTimeInterval(duration)
-        let line1 = TimeFormatter.verbose(duration)
-        let line2 = TimeFormatter.endTime(endDate)
-
-        let font1 = NSFont.systemFont(ofSize: 14, weight: .semibold)
-        let font2 = NSFont.systemFont(ofSize: 12)
-        let s1 = NSAttributedString(string: line1, attributes: [.font: font1]).size()
-        let s2 = NSAttributedString(string: line2, attributes: [.font: font2]).size()
-
-        let hPad: CGFloat = 14, vPad: CGFloat = 10, gap: CGFloat = 3
-        let bW = max(s1.width, s2.width) + hPad * 2
-        let bH = s1.height + gap + s2.height + vPad * 2
-        let dot = dragEndPoint
-
-        var bX = dot.x - bW - 16
-        if bX < 8 { bX = dot.x + 16 }
-        if bX + bW > bounds.width - 8 { bX = dot.x - bW - 16 }
-        var bY = dot.y - bH / 2
-        bY = max(8, min(bY, bounds.height - bH - 8))
-        return NSRect(x: bX, y: bY, width: bW, height: bH)
-    }
 
     private func drawBubble() {
         let duration = DurationMapper.toDuration(pixels: dragDistance, screenHeight: screenHeight)
@@ -292,7 +305,7 @@ final class DragOverlayView: NSView {
         let attrs1: [NSAttributedString.Key: Any] = [.font: font1, .foregroundColor: NSColor.white]
         let attrs2: [NSAttributedString.Key: Any] = [
             .font: font2,
-            .foregroundColor: NSColor.white.withAlphaComponent(0.72)
+            .foregroundColor: Theme.NS.sandLight.withAlphaComponent(0.88)
         ]
         let str1 = NSAttributedString(string: line1, attributes: attrs1)
         let str2 = NSAttributedString(string: line2, attributes: attrs2)
@@ -303,27 +316,27 @@ final class DragOverlayView: NSView {
         let bH = s1.height + gap + s2.height + vPad * 2
         let dot = dragEndPoint
 
-        var bX = dot.x - bW - 16
-        if bX < 8 { bX = dot.x + 16 }
-        if bX + bW > bounds.width - 8 { bX = dot.x - bW - 16 }
+        var bX = dot.x - bW - 22
+        if bX < 8 { bX = dot.x + 22 }
+        if bX + bW > bounds.width - 8 { bX = dot.x - bW - 22 }
         var bY = dot.y - bH / 2
         bY = max(8, min(bY, bounds.height - bH - 8))
 
         let bubbleRect = NSRect(x: bX, y: bY, width: bW, height: bH)
 
         let shadow = NSShadow()
-        shadow.shadowColor = NSColor.black.withAlphaComponent(0.5)
+        shadow.shadowColor = NSColor.black.withAlphaComponent(0.45)
         shadow.shadowBlurRadius = 16
         shadow.shadowOffset = NSSize(width: 0, height: -4)
         shadow.set()
 
         let bg = NSBezierPath(roundedRect: bubbleRect, xRadius: 12, yRadius: 12)
-        NSColor(calibratedRed: 0.1, green: 0.1, blue: 0.12, alpha: 0.93).setFill()
+        Theme.NS.glassDark.setFill()
         bg.fill()
 
         NSShadow().set()
-        NSColor.white.withAlphaComponent(0.12).setStroke()
-        bg.lineWidth = 0.5
+        Theme.NS.teal.withAlphaComponent(0.45).setStroke()
+        bg.lineWidth = 0.8
         bg.stroke()
 
         str2.draw(at: NSPoint(x: bX + hPad, y: bY + vPad))

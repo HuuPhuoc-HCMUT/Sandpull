@@ -1,7 +1,6 @@
 import SwiftUI
 import AppKit
 import ServiceManagement
-import EventKit
 
 extension UserDefaults {
     var remindersEnabled: Bool {
@@ -23,15 +22,12 @@ struct SettingsView: View {
     @State private var remindersEnabled = UserDefaults.standard.remindersEnabled
     @State private var soundEnabled = UserDefaults.standard.notificationSoundEnabled
     @State private var launchAtLogin = UserDefaults.standard.launchAtLogin
-    @State private var calendarAuthorized = false
-    @State private var hasMicrosoftCalendar = false
-    @State private var hasGoogleCalendar = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Image(systemName: "gearshape.fill")
-                    .foregroundStyle(.purple)
+                    .foregroundStyle(Theme.accent)
                     .font(.system(size: 15, weight: .medium))
                 Text("Settings")
                     .font(.headline)
@@ -46,7 +42,7 @@ struct SettingsView: View {
             VStack(spacing: 0) {
                 settingRow(
                     icon: "bell.badge.fill",
-                    iconColor: .purple,
+                    iconColor: Theme.accent,
                     title: "Notification Sound",
                     subtitle: "Play sound when timer ends",
                     isOn: $soundEnabled
@@ -92,10 +88,6 @@ struct SettingsView: View {
 
             Divider()
 
-            // Calendar sources hint — always shown
-            calendarSourcesSection
-            Divider()
-
             HStack {
                 Text("PullTimer 1.0")
                     .font(.caption)
@@ -116,114 +108,7 @@ struct SettingsView: View {
                 remindersEnabled = false
                 UserDefaults.standard.remindersEnabled = false
             }
-            // Check calendar sources (independent of EventKit permission)
-            let provider = AppleCalendarProvider.shared
-            hasMicrosoftCalendar = provider.hasExchangeSource
-            hasGoogleCalendar = provider.hasCalDAVSource
         }
-    }
-
-    @ViewBuilder
-    private var calendarSourcesSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 6) {
-                Image(systemName: "calendar")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.secondary)
-                Text("Calendar Sources")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal, 14)
-            .padding(.top, 10)
-            .padding(.bottom, 6)
-
-            if !hasMicrosoftCalendar {
-                calendarHintRow(
-                    icon: "envelope.badge.fill",
-                    iconColor: Color(red: 0.0, green: 0.47, blue: 0.84),
-                    title: "Connect Microsoft Calendar",
-                    subtitle: "See Outlook & Teams meetings on the timeline",
-                    action: openInternetAccounts
-                )
-            }
-
-            if !hasGoogleCalendar {
-                if !hasMicrosoftCalendar { Divider().padding(.leading, 48) }
-                calendarHintRow(
-                    icon: "globe",
-                    iconColor: Color(red: 0.26, green: 0.63, blue: 0.28),
-                    title: "Connect Google Calendar",
-                    subtitle: "See Google meet events on the timeline",
-                    action: openInternetAccounts
-                )
-            }
-
-            if hasMicrosoftCalendar && hasGoogleCalendar {
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                        .font(.system(size: 13))
-                    Text("All calendar sources connected")
-                        .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
-                }
-                .padding(.horizontal, 14)
-                .padding(.bottom, 10)
-            }
-        }
-    }
-
-    private func calendarHintRow(
-        icon: String,
-        iconColor: Color,
-        title: String,
-        subtitle: String,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 7, style: .continuous)
-                        .fill(iconColor)
-                        .frame(width: 28, height: 28)
-                    Image(systemName: icon)
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(.white)
-                }
-
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(title)
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(.primary)
-                    Text(subtitle)
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-
-                Image(systemName: "arrow.up.right")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.tertiary)
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .pointerCursor()
-    }
-
-    private func openInternetAccounts() {
-        // macOS 13+ uses a new identifier; fall back to old one for 12 and below
-        let url: URL
-        if #available(macOS 13.0, *) {
-            url = URL(string: "x-apple.systempreferences:com.apple.Internet-Accounts-Settings.extension")!
-        } else {
-            url = URL(string: "x-apple.systempreferences:com.apple.preference.internetaccounts")!
-        }
-        NSWorkspace.shared.open(url)
     }
 
     private func settingRow(
@@ -256,7 +141,7 @@ struct SettingsView: View {
 
             Toggle("", isOn: isOn)
                 .toggleStyle(.switch)
-                .tint(.purple)
+                .tint(Theme.accent)
                 .labelsHidden()
                 .onChange(of: isOn.wrappedValue) { _ in onChange() }
                 .pointerCursor()

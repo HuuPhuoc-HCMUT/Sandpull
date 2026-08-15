@@ -1,13 +1,13 @@
 import Foundation
 
 struct DurationMapper {
-    // Dead zone: first 24px of drag = no timer started yet (visual feedback only)
-    static let deadZone: CGFloat = 112  // ~4cm — must drag past this before timer starts
+    // Dead zone: first stretch of drag = visual feedback only
+    static let deadZone: CGFloat = 112
 
-    // Full usable range after dead zone maps to 1min → 24h
+    // Most of the drag is reserved for short timers so duration grows slowly.
     // t = normalized position in (0, 1] after dead zone
-    //   t=0.10 → 30 min   (fine zone for short timers)
-    //   t=0.40 → 4 h
+    //   t=0.70 → 60 min
+    //   t=0.90 → 4 h
     //   t=1.00 → 24 h
 
     static func toDuration(pixels: CGFloat, screenHeight: CGFloat = 900) -> TimeInterval {
@@ -17,14 +17,13 @@ struct DurationMapper {
 
         let t = min(1.0, Double(effective) / Double(usable))
         let raw: TimeInterval
-        if t <= 0.10 {
-            raw = (t / 0.10) * 1800                       // 0 – 30 min
-        } else if t <= 0.40 {
-            raw = 1800 + ((t - 0.10) / 0.30) * 12600     // 30 min – 4 h
+        if t <= 0.70 {
+            raw = (t / 0.70) * 3600                       // 0 – 60 min
+        } else if t <= 0.90 {
+            raw = 3600 + ((t - 0.70) / 0.20) * 10800     // 1 h – 4 h
         } else {
-            raw = 14400 + ((t - 0.40) / 0.60) * 72000    // 4 h – 24 h
+            raw = 14400 + ((t - 0.90) / 0.10) * 72000    // 4 h – 24 h
         }
-        // Snap to nearest minute, minimum 1 minute
         return max(60, (raw / 60).rounded() * 60)
     }
 

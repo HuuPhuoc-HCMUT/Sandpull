@@ -1,7 +1,9 @@
 import SwiftUI
+import AppKit
 
 struct TimerListView: View {
     @ObservedObject var store: TimerStore
+    var onAdd: () -> Void = {}
 
     var body: some View {
         VStack(spacing: 0) {
@@ -18,24 +20,27 @@ struct TimerListView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 10) {
-            Image(systemName: "timer")
+        VStack(spacing: 12) {
+            Image(systemName: "hourglass")
                 .font(.system(size: 32, weight: .light))
-                .foregroundStyle(.secondary)
-            Text("Drag the menu bar icon\nto create a timer")
+                .foregroundStyle(Theme.accent.opacity(0.7))
+            Text("Drag the menu bar icon\nor add a timer below")
                 .multilineTextAlignment(.center)
                 .font(.callout)
                 .foregroundStyle(.secondary)
+            Button("Add Timer") { onAdd() }
+                .buttonStyle(SaveButtonStyle())
+                .padding(.top, 4)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 32)
+        .padding(.vertical, 28)
         .padding(.horizontal, 20)
     }
 
     private var timerList: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Active Timers")
+                Text("Tasks")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(.secondary)
                     .kerning(0.5)
@@ -61,6 +66,15 @@ struct TimerListView: View {
 
     private var footer: some View {
         HStack {
+            Button {
+                onAdd()
+            } label: {
+                Label("Add", systemImage: "plus")
+            }
+            .buttonStyle(QuitButtonStyle())
+
+            Spacer()
+
             Button("Quit") { NSApp.terminate(nil) }
                 .buttonStyle(QuitButtonStyle())
         }

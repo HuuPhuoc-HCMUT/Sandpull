@@ -3,6 +3,7 @@ import Combine
 
 extension Notification.Name {
     static let timerExpired = Notification.Name("com.pulltimer.timerExpired")
+    static let openTimerList = Notification.Name("com.pulltimer.openTimerList")
 }
 
 @MainActor
@@ -61,17 +62,15 @@ final class TimerStore: ObservableObject {
     }
 
     private func tick() {
-        var expired: [TimerItem] = []
-        for item in items where item.isExpired {
-            expired.append(item)
+        var newlyExpired: [TimerItem] = []
+        for index in items.indices where items[index].isExpired && !items[index].didNotify {
+            items[index].didNotify = true
+            newlyExpired.append(items[index])
         }
-        if !expired.isEmpty {
-            items.removeAll { $0.isExpired }
+        if !newlyExpired.isEmpty {
             persist()
-            for item in expired {
-                // Cancel the system notification (we'll handle it in-process)
+            for item in newlyExpired {
                 NotificationManager.shared.cancel(id: item.id)
-                // Fire both: in-process alert + system notification fallback
                 NotificationManager.shared.fireExpiry(for: item)
                 NotificationCenter.default.post(name: .timerExpired, object: item)
             }
@@ -89,11 +88,15 @@ final class TimerStore: ObservableObject {
     private func load() {
         guard let data = UserDefaults.standard.data(forKey: udKey),
               let decoded = try? JSONDecoder().decode([TimerItem].self, from: data) else { return }
-        let now = Date()
-        items = decoded.filter { $0.endAt > now }
-        // Reschedule notifications for surviving timers — they are lost if app was killed
-        for item in items {
-            NotificationManager.shared.schedule(for: item)
+        items = decoded
+        for index in items.indices {
+            if items[index].isExpired {
+                // App was away when this fired — keep the task, don't popup again
+                items[index].didNotify = true
+            } else {
+                NotificationManager.shared.schedule(for: items[index])
+            }
         }
+        persist()
     }
 }

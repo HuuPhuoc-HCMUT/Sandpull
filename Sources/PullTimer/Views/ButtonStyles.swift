@@ -52,8 +52,8 @@ struct SaveButtonStyle: ButtonStyle {
             .padding(.vertical, 7)
             .background(
                 Capsule()
-                    .fill(Color.purple.opacity(isHovered ? 0.82 : 1.0))
-                    .shadow(color: Color.purple.opacity(0.4), radius: isHovered ? 7 : 3, y: 2)
+                    .fill(Theme.accent.opacity(isHovered ? 0.82 : 1.0))
+                    .shadow(color: Theme.accent.opacity(0.4), radius: isHovered ? 7 : 3, y: 2)
             )
             .foregroundStyle(.white)
             .scaleEffect(configuration.isPressed ? 0.95 : (isHovered ? 1.03 : 1.0))
