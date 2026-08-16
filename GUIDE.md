@@ -65,9 +65,9 @@ Click the hourglass (without dragging) to open the list.
 
 **Done** — expired timers stay here until you press **Done** on the row or **Clear done**.
 
-At the bottom you can add a timer without pulling: type a name, set the slider, tap a chip, then **Add**. Settings → **List & Save** can hide the slider or the name chips.
+At the bottom you can add a timer without pulling: type a name, set the slider, tap a chip, then press Return. Settings → **List & Save** can hide the slider or the name chips.
 
-ⓘ starts the guided tour. **Quit** leaves the app.
+ⓘ starts the guided tour. The gear opens Settings. **Quit** leaves the app.
 
 ---
 
