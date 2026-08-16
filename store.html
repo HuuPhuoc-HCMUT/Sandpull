@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sandpull Store: colorways, metals, and sand</title>
+  <meta name="description" content="Customize Sandpull. Preview a colorway, hourglass metal, and sand, then buy the packs you need.">
+  <meta property="og:title" content="Sandpull Store">
+  <meta property="og:description" content="Looks for the menu bar hourglass. Preview, then buy.">
+  <meta property="og:image" content="assets/app-icon.png">
+  <link rel="icon" href="assets/app-icon-256.png" type="image/png" sizes="256x256">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/app-icon-256.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-store">
+  <header class="nav">
+    <a class="brand" href="index.html">
+      <img src="assets/app-icon-256.png" width="36" height="36" alt="">
+      <span>Sandpull</span>
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a class="keep" href="guide.html">Guide</a>
+      <a class="keep" href="store.html" aria-current="page">Store</a>
+      <a href="downloads/Sandpull.dmg" class="nav-cta" download>Download</a>
+    </nav>
+  </header>
+
+  <main class="store">
+    <section class="store-hero">
+      <div class="section-copy">
+        <p class="eyebrow">Store</p>
+        <h1>Make the hourglass yours</h1>
+        <p>The app stays free. These packs change the line, the glass, and the sand. Pick a look. The preview updates as you click.</p>
+        <p class="fine" id="orderDone" hidden></p>
+      </div>
+    </section>
+
+    <section class="store-studio">
+      <div class="store-preview" id="storePreview">
+        <div class="desktop">
+          <div class="menubar">
+            <span class="apple" aria-hidden="true"></span>
+            <span class="mb-app">Sandpull</span>
+            <span class="mb-spacer"></span>
+            <span class="status-icon">
+              <svg class="hg" viewBox="0 0 42 42" aria-hidden="true">
+                <path d="M9 6h24L23.3 21H18.7L9 6Z" fill="var(--hg-glass)" stroke="var(--hg-stroke)" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M9 36h24L23.3 21H18.7L9 36Z" fill="var(--hg-glass)" stroke="var(--hg-stroke)" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M12 8h18L21 20Z" fill="var(--hg-sand)"/>
+                <path d="M11 35h20L21 25Z" fill="var(--hg-sand)"/>
+                <rect x="7" y="4" width="28" height="3.2" rx="1" fill="var(--hg-cap)"/>
+                <rect x="7" y="34.8" width="28" height="3.2" rx="1" fill="var(--hg-cap)"/>
+              </svg>
+              <span class="status-time">24:12</span>
+            </span>
+            <span class="mb-clock">16:39</span>
+          </div>
+          <div class="store-canvas">
+            <div class="line store-line" id="storeLine"></div>
+            <div class="glass store-glass">
+              <svg class="hg lg" viewBox="0 0 42 42">
+                <path d="M9 6h24L23.3 21H18.7L9 6Z" fill="var(--hg-glass)" stroke="var(--hg-stroke)" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M9 36h24L23.3 21H18.7L9 36Z" fill="var(--hg-glass)" stroke="var(--hg-stroke)" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M12 8h18L21 20Z" fill="var(--hg-sand)"/>
+                <path d="M11 35h20L21 25Z" fill="var(--hg-sand)"/>
+                <rect x="7" y="4" width="28" height="3.2" rx="1" fill="var(--hg-cap)"/>
+                <rect x="7" y="34.8" width="28" height="3.2" rx="1" fill="var(--hg-cap)"/>
+              </svg>
+            </div>
+            <div class="bubble store-bubble">
+              <strong>25 min</strong>
+              <span>17:04</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="store-controls">
+        <fieldset>
+          <legend>Colorway</legend>
+          <div class="swatches" id="paletteSwatches"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Hourglass</legend>
+          <div class="swatches" id="metalSwatches"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Sand</legend>
+          <div class="swatches" id="sandSwatches"></div>
+        </fieldset>
+        <div class="store-buy">
+          <p class="store-total" id="storeTotal">This look is included</p>
+          <button type="button" class="btn-save" id="addLook">Add the packs for this look</button>
+          <button type="button" class="btn-quiet" id="addStudio">Buy Studio, $8, unlocks everything</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="store-packs" id="packs">
+      <div class="section-copy">
+        <p class="eyebrow">Packs</p>
+        <h2>One-time unlocks</h2>
+        <p>Buy a pack, or Studio for all of them. A license email will follow once card checkout is live.</p>
+      </div>
+      <ul class="pack-grid" id="packGrid"></ul>
+    </section>
+
+    <aside class="cart" id="cart" hidden>
+      <p class="eyebrow">Cart</p>
+      <ul id="cartRows"></ul>
+      <p class="store-total" id="cartTotal"></p>
+      <button type="button" class="btn-save" id="openCheckout">Checkout</button>
+    </aside>
+  </main>
+
+  <dialog class="checkout" id="checkout">
+    <form id="checkoutForm" method="dialog">
+      <p class="eyebrow">Checkout</p>
+      <h2 id="checkoutTitle">Reserve this look</h2>
+      <p class="fine" id="checkoutSummary"></p>
+      <label>Name <input id="orderName" name="name" type="text" required autocomplete="name"></label>
+      <label>Email <input id="orderEmail" name="email" type="email" required autocomplete="email"></label>
+      <p class="fine">Card payments open after Sandpull is notarized. This saves your order. We will email a license key to unlock the packs in the app.</p>
+      <div class="hero-actions">
+        <button type="submit" class="btn-save" id="placeOrder">Place order</button>
+        <button type="button" class="btn-quiet" id="closeCheckout">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer>
+    <span>Sandpull · inspired by <a href="https://maddin.io/gestimer/" rel="noopener noreferrer">Gestimer</a></span>
+    <a href="guide.html">Guide</a>
+    <a href="store.html">Store</a>
+  </footer>
+
+  <script src="store.js"></script>
+</body>
+</html>
