@@ -29,20 +29,25 @@
 
   <main class="store">
     <section class="store-hero">
-      <div class="section-copy">
+      <div>
         <p class="eyebrow">Store</p>
-        <h1>Make the hourglass yours</h1>
-        <p>The app stays free. These packs change the line, the glass, and the sand. Pick a look. The preview updates as you click.</p>
+        <h1>Dress the hourglass</h1>
+        <p class="lede">The timer is free. Looks are optional. Click a preset or mix a colorway, metal, and sand. The pull on the right is live.</p>
         <p class="fine" id="orderDone" hidden></p>
+      </div>
+      <div class="store-hero-meta">
+        <p class="eyebrow">This look</p>
+        <p class="look-name" id="lookName">Classic</p>
+        <p class="look-price" id="storeTotal">Included</p>
       </div>
     </section>
 
-    <section class="store-studio">
+    <section class="store-stage">
       <div class="store-preview" id="storePreview">
         <div class="desktop">
           <div class="menubar">
             <span class="apple" aria-hidden="true"></span>
-            <span class="mb-app">Sandpull</span>
+            <span class="mb-app">Finder</span>
             <span class="mb-spacer"></span>
             <span class="status-icon">
               <svg class="hg" viewBox="0 0 42 42" aria-hidden="true">
@@ -55,10 +60,12 @@
               </svg>
               <span class="status-time">24:12</span>
             </span>
+            <span class="mb-spacer"></span>
             <span class="mb-clock">16:39</span>
           </div>
           <div class="store-canvas">
-            <div class="line store-line" id="storeLine"></div>
+            <div class="store-dim" aria-hidden="true"></div>
+            <div class="line store-line"></div>
             <div class="glass store-glass">
               <svg class="hg lg" viewBox="0 0 42 42">
                 <path d="M9 6h24L23.3 21H18.7L9 6Z" fill="var(--hg-glass)" stroke="var(--hg-stroke)" stroke-width="1.8" stroke-linejoin="round"/>
@@ -73,9 +80,18 @@
               <strong>25 min</strong>
               <span>17:04</span>
             </div>
+            <div class="trash store-trash" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4.5 7h15M9 7V5.2A1.2 1.2 0 0 1 10.2 4h3.6A1.2 1.2 0 0 1 15 5.2V7"/>
+                <path class="can" d="M7 7l.85 13.1A1.4 1.4 0 0 0 9.24 21.4h5.52a1.4 1.4 0 0 0 1.39-1.3L17 7"/>
+                <path d="M10 11v6.2M14 11v6.2"/>
+              </svg>
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="presets" id="presets"></div>
 
       <div class="store-controls">
         <fieldset>
@@ -90,11 +106,11 @@
           <legend>Sand</legend>
           <div class="swatches" id="sandSwatches"></div>
         </fieldset>
-        <div class="store-buy">
-          <p class="store-total" id="storeTotal">This look is included</p>
-          <button type="button" class="btn-save" id="addLook">Add the packs for this look</button>
-          <button type="button" class="btn-quiet" id="addStudio">Buy Studio, $8, unlocks everything</button>
-        </div>
+      </div>
+
+      <div class="store-buy">
+        <button type="button" class="btn-save" id="addLook">Add packs for this look</button>
+        <button type="button" class="btn-quiet" id="addStudio">Studio, $8, every look</button>
       </div>
     </section>
 
@@ -102,18 +118,17 @@
       <div class="section-copy">
         <p class="eyebrow">Packs</p>
         <h2>One-time unlocks</h2>
-        <p>Buy a pack, or Studio for all of them. A license email will follow once card checkout is live.</p>
+        <p>Studio is the whole wardrobe. Or take one pack. A license email follows when card checkout is live.</p>
       </div>
       <ul class="pack-grid" id="packGrid"></ul>
     </section>
-
-    <aside class="cart" id="cart" hidden>
-      <p class="eyebrow">Cart</p>
-      <ul id="cartRows"></ul>
-      <p class="store-total" id="cartTotal"></p>
-      <button type="button" class="btn-save" id="openCheckout">Checkout</button>
-    </aside>
   </main>
+
+  <aside class="cart-dock" id="cart" hidden>
+    <ul id="cartRows"></ul>
+    <p class="store-total" id="cartTotal"></p>
+    <button type="button" class="btn-save" id="openCheckout">Checkout</button>
+  </aside>
 
   <dialog class="checkout" id="checkout">
     <form id="checkoutForm" method="dialog">
@@ -132,8 +147,10 @@
 
   <footer>
     <span>Sandpull · inspired by <a href="https://maddin.io/gestimer/" rel="noopener noreferrer">Gestimer</a></span>
-    <a href="guide.html">Guide</a>
-    <a href="store.html">Store</a>
+    <span class="foot-links">
+      <a href="guide.html">Guide</a>
+      <a href="store.html">Store</a>
+    </span>
   </footer>
 
   <script src="store.js"></script>
