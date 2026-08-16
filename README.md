@@ -5,7 +5,7 @@ Marketing site for the Mac app. Same teal / sand / glass language as Sandpull. T
 ```
 website/
   index.html      Landing page
-  store.html      Looks store (colorways, metals, sand)
+  store.html      Store (forms, faces, chimes)
   store.js
   guide.html      Tutorial (same design)
   GUIDE.md        Same tutorial as a document

@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sandpull Store: colorways, metals, and sand</title>
-  <meta name="description" content="Customize Sandpull. Preview a colorway, hourglass metal, and sand, then buy the packs you need.">
+  <title>Sandpull Store: forms, faces, and chimes</title>
+  <meta name="description" content="The free hourglass keeps time. Unlock a different body, menu bar face, and expiry chime for the icon you live with.">
   <meta property="og:title" content="Sandpull Store">
-  <meta property="og:description" content="Looks for the menu bar hourglass. Preview, then buy.">
+  <meta property="og:description" content="Forms, faces, and chimes for the menu bar hourglass.">
   <meta property="og:image" content="assets/app-icon.png">
   <link rel="icon" href="assets/app-icon-256.png" type="image/png" sizes="256x256">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -31,33 +31,27 @@
     <section class="store-hero">
       <div>
         <p class="eyebrow">Store</p>
-        <h1>Dress the hourglass</h1>
-        <p class="lede">The timer is free. Looks are optional. Click a preset or mix a colorway, metal, and sand. The pull on the right is live.</p>
+        <h1>The icon you live with</h1>
+        <p class="lede">You will look at this forty times a day. The free app keeps the starter glass. These change the body, the menu bar, and the sound when the sand runs out.</p>
         <p class="fine" id="orderDone" hidden></p>
       </div>
       <div class="store-hero-meta">
-        <p class="eyebrow">This look</p>
-        <p class="look-name" id="lookName">Classic</p>
+        <p class="eyebrow">On your Mac</p>
+        <p class="look-name" id="lookName">Starter glass</p>
         <p class="look-price" id="storeTotal">Included</p>
       </div>
     </section>
 
     <section class="store-stage">
-      <div class="store-preview" id="storePreview">
+      <div class="store-preview" id="storePreview" data-face="both">
         <div class="desktop">
           <div class="menubar">
             <span class="apple" aria-hidden="true"></span>
             <span class="mb-app">Finder</span>
             <span class="mb-spacer"></span>
-            <span class="status-icon">
-              <svg class="hg" viewBox="0 0 42 42" aria-hidden="true">
-                <path d="M9 6h24L23.3 21H18.7L9 6Z" fill="var(--hg-glass)" stroke="var(--hg-stroke)" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M9 36h24L23.3 21H18.7L9 36Z" fill="var(--hg-glass)" stroke="var(--hg-stroke)" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M12 8h18L21 20Z" fill="var(--hg-sand)"/>
-                <path d="M11 35h20L21 25Z" fill="var(--hg-sand)"/>
-                <rect x="7" y="4" width="28" height="3.2" rx="1" fill="var(--hg-cap)"/>
-                <rect x="7" y="34.8" width="28" height="3.2" rx="1" fill="var(--hg-cap)"/>
-              </svg>
+            <span class="status-icon" id="storeFace">
+              <span class="face-ring" aria-hidden="true"></span>
+              <span class="face-glass" id="storeIconGlass"></span>
               <span class="status-time">24:12</span>
             </span>
             <span class="mb-spacer"></span>
@@ -66,16 +60,7 @@
           <div class="store-canvas">
             <div class="store-dim" aria-hidden="true"></div>
             <div class="line store-line"></div>
-            <div class="glass store-glass">
-              <svg class="hg lg" viewBox="0 0 42 42">
-                <path d="M9 6h24L23.3 21H18.7L9 6Z" fill="var(--hg-glass)" stroke="var(--hg-stroke)" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M9 36h24L23.3 21H18.7L9 36Z" fill="var(--hg-glass)" stroke="var(--hg-stroke)" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M12 8h18L21 20Z" fill="var(--hg-sand)"/>
-                <path d="M11 35h20L21 25Z" fill="var(--hg-sand)"/>
-                <rect x="7" y="4" width="28" height="3.2" rx="1" fill="var(--hg-cap)"/>
-                <rect x="7" y="34.8" width="28" height="3.2" rx="1" fill="var(--hg-cap)"/>
-              </svg>
-            </div>
+            <div class="glass store-glass" id="storeBigGlass"></div>
             <div class="bubble store-bubble">
               <strong>25 min</strong>
               <span>17:04</span>
@@ -95,30 +80,48 @@
 
       <div class="store-controls">
         <fieldset>
-          <legend>Colorway</legend>
-          <div class="swatches" id="paletteSwatches"></div>
+          <legend>Form, the body in the menu bar</legend>
+          <div class="choice-grid" id="formChoices"></div>
         </fieldset>
         <fieldset>
-          <legend>Hourglass</legend>
-          <div class="swatches" id="metalSwatches"></div>
+          <legend>Face, what the bar shows</legend>
+          <div class="choice-grid" id="faceChoices"></div>
         </fieldset>
         <fieldset>
-          <legend>Sand</legend>
-          <div class="swatches" id="sandSwatches"></div>
+          <legend>Chime, tap to hear the ending</legend>
+          <div class="choice-grid" id="chimeChoices"></div>
         </fieldset>
       </div>
 
       <div class="store-buy">
-        <button type="button" class="btn-save" id="addLook">Add packs for this look</button>
-        <button type="button" class="btn-quiet" id="addStudio">Studio, $8, every look</button>
+        <button type="button" class="btn-save" id="addLook">Keep this on the Mac</button>
+        <button type="button" class="btn-quiet" id="addStudio">Atelier, $11, every form, face, and chime</button>
       </div>
+    </section>
+
+    <section class="why-buy">
+      <article>
+        <p class="eyebrow">Form</p>
+        <h2>A different object</h2>
+        <p>Needle, Twin, Orb, Monument. Not a tint on the same glass. The thing in the menu bar changes.</p>
+      </article>
+      <article>
+        <p class="eyebrow">Face</p>
+        <h2>A different glance</h2>
+        <p>Sand only. Digits only. A ring that empties. The countdown you see without opening a window.</p>
+      </article>
+      <article>
+        <p class="eyebrow">Chime</p>
+        <h2>A different ending</h2>
+        <p>Bell, wood, glass. Press play here. That sound is what you buy for every timer that finishes.</p>
+      </article>
     </section>
 
     <section class="store-packs" id="packs">
       <div class="section-copy">
-        <p class="eyebrow">Packs</p>
-        <h2>One-time unlocks</h2>
-        <p>Studio is the whole wardrobe. Or take one pack. A license email follows when card checkout is live.</p>
+        <p class="eyebrow">Unlocks</p>
+        <h2>Pay once. Keep it.</h2>
+        <p>Atelier is the whole desk. Or take the one piece you just tried. A license email follows when card checkout is live.</p>
       </div>
       <ul class="pack-grid" id="packGrid"></ul>
     </section>
@@ -133,11 +136,11 @@
   <dialog class="checkout" id="checkout">
     <form id="checkoutForm" method="dialog">
       <p class="eyebrow">Checkout</p>
-      <h2 id="checkoutTitle">Reserve this look</h2>
+      <h2 id="checkoutTitle">Keep this on your Mac</h2>
       <p class="fine" id="checkoutSummary"></p>
       <label>Name <input id="orderName" name="name" type="text" required autocomplete="name"></label>
       <label>Email <input id="orderEmail" name="email" type="email" required autocomplete="email"></label>
-      <p class="fine">Card payments open after Sandpull is notarized. This saves your order. We will email a license key to unlock the packs in the app.</p>
+      <p class="fine">Card payments open after Sandpull is notarized. This saves your order. We will email a license key to unlock these in the app.</p>
       <div class="hero-actions">
         <button type="submit" class="btn-save" id="placeOrder">Place order</button>
         <button type="button" class="btn-quiet" id="closeCheckout">Cancel</button>

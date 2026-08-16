@@ -1,136 +1,92 @@
-const PALETTES = {
-  teal: {
-    name: "Teal",
+const FORMS = {
+  classic: {
+    name: "Starter",
     pack: null,
-    swatch: "#2f7d8a",
-    vars: {
-      "--accent": "#2f7d8a",
-      "--accent-deep": "#1a5560",
-      "--line": "#6ad0d8",
-      "--ink": "#1e3036",
-      "--desktop": "#c8d6d8",
-      "--menubar": "#b7c6c8",
-      "--bubble": "#163038",
-    },
+    blurb: "The free glass",
+    svg: `<path d="M9 6h24L23.3 21H18.7L9 6Z"/><path d="M9 36h24L23.3 21H18.7L9 36Z"/><path class="sand" d="M12 8h18L21 20Z"/><path class="sand" d="M11 35h20L21 25Z"/><rect class="cap" x="7" y="4" width="28" height="3.2" rx="1"/><rect class="cap" x="7" y="34.8" width="28" height="3.2" rx="1"/>`,
   },
-  graphite: {
-    name: "Graphite",
-    pack: "colorways",
-    swatch: "#4a5560",
-    vars: {
-      "--accent": "#4a5560",
-      "--accent-deep": "#2d3640",
-      "--line": "#c5ced6",
-      "--ink": "#1c2228",
-      "--desktop": "#c5c9cf",
-      "--menubar": "#b4b8bf",
-      "--bubble": "#1c2228",
-    },
+  needle: {
+    name: "Needle",
+    pack: "forms",
+    blurb: "A thin spine",
+    svg: `<path d="M17 5h8L22.2 21h-2.4L17 5Z"/><path d="M17 37h8L22.2 21h-2.4L17 37Z"/><path class="sand" d="M18.2 7h5.6L21 19Z"/><path class="sand" d="M18 36h6L21 26Z"/><rect class="cap" x="15" y="3.4" width="12" height="2.4" rx="1"/><rect class="cap" x="15" y="36.2" width="12" height="2.4" rx="1"/>`,
   },
-  matcha: {
-    name: "Matcha",
-    pack: "colorways",
-    swatch: "#4f7a4a",
-    vars: {
-      "--accent": "#4f7a4a",
-      "--accent-deep": "#2f4d2c",
-      "--line": "#8fd084",
-      "--ink": "#243026",
-      "--desktop": "#c8d4c2",
-      "--menubar": "#b6c4b0",
-      "--bubble": "#1c2a1e",
-    },
+  twin: {
+    name: "Twin",
+    pack: "forms",
+    blurb: "Two glasses",
+    svg: `<path d="M4 8h14L14.2 21H7.8L4 8Z"/><path d="M4 34h14L14.2 21H7.8L4 34Z"/><path class="sand" d="M6 10h10L11 19Z"/><path class="sand" d="M6 33h10L11 25Z"/><rect class="cap" x="3" y="6.2" width="16" height="2.4" rx="1"/><rect class="cap" x="3" y="33.4" width="16" height="2.4" rx="1"/><path d="M24 8h14L34.2 21H27.8L24 8Z"/><path d="M24 34h14L34.2 21H27.8L24 34Z"/><path class="sand" d="M26 10h10L31 19Z"/><path class="sand" d="M26 33h10L31 25Z"/><rect class="cap" x="23" y="6.2" width="16" height="2.4" rx="1"/><rect class="cap" x="23" y="33.4" width="16" height="2.4" rx="1"/>`,
   },
-  dusk: {
-    name: "Dusk",
-    pack: "colorways",
-    swatch: "#5a4f86",
-    vars: {
-      "--accent": "#5a4f86",
-      "--accent-deep": "#3a3458",
-      "--line": "#b4a8e0",
-      "--ink": "#2a2740",
-      "--desktop": "#c9c3d4",
-      "--menubar": "#b8b1c6",
-      "--bubble": "#221e36",
-    },
+  orb: {
+    name: "Orb",
+    pack: "forms",
+    blurb: "Round bowls",
+    svg: `<circle cx="21" cy="13" r="8.2"/><circle cx="21" cy="29" r="8.2"/><path class="sand" d="M15 10.5a6.2 6.2 0 0 1 12 0c0 3-2.4 5.4-6 6.4-3.6-1-6-3.4-6-6.4Z"/><path class="sand" d="M15 33.2a6.2 6.2 0 0 0 12 0c0-2.6-2.2-4.6-6-5.4-3.8.8-6 2.8-6 5.4Z"/><rect class="cap" x="11" y="4" width="20" height="2.6" rx="1"/><rect class="cap" x="11" y="35.4" width="20" height="2.6" rx="1"/>`,
   },
-  ember: {
-    name: "Ember",
-    pack: "colorways",
-    swatch: "#a45a38",
-    vars: {
-      "--accent": "#a45a38",
-      "--accent-deep": "#6e3a22",
-      "--line": "#f0a06a",
-      "--ink": "#3a2418",
-      "--desktop": "#d8c4b6",
-      "--menubar": "#c7b3a4",
-      "--bubble": "#2e1a12",
-    },
+  monument: {
+    name: "Monument",
+    pack: "forms",
+    blurb: "A heavy glass",
+    svg: `<path d="M6 7h30L24.5 21h-7L6 7Z"/><path d="M6 35h30L24.5 21h-7L6 35Z"/><path class="sand" d="M9 9h24L21 19Z"/><path class="sand" d="M8 34h26L21 26Z"/><rect class="cap" x="4" y="3.6" width="34" height="4" rx="1"/><rect class="cap" x="4" y="34.4" width="34" height="4" rx="1"/>`,
   },
 };
 
-const METALS = {
-  brass: { name: "Brass", pack: null, swatch: "#8a6420", cap: "#8a6420", stroke: "#2f7d8a", glass: "#c5d8db" },
-  silver: { name: "Silver", pack: "metals", swatch: "#9aa4ad", cap: "#8b959e", stroke: "#5a6570", glass: "#d5dde2" },
-  ink: { name: "Ink", pack: "metals", swatch: "#1e3036", cap: "#1e3036", stroke: "#1e3036", glass: "#9eb0b6" },
-  rose: { name: "Rose", pack: "metals", swatch: "#b87878", cap: "#a86868", stroke: "#8a5050", glass: "#ead4d4" },
+const FACES = {
+  both: { name: "Glass + time", pack: null, blurb: "The starter face" },
+  sand: { name: "Sand only", pack: "faces", blurb: "Just the pour" },
+  digits: { name: "Digits", pack: "faces", blurb: "A quiet countdown" },
+  ring: { name: "Ring", pack: "faces", blurb: "A circle that empties" },
 };
 
-const SANDS = {
-  gold: { name: "Gold", pack: null, swatch: "#c49a4a", fill: "#c49a4a" },
-  pale: { name: "Pale", pack: "sands", swatch: "#efe0b8", fill: "#efe0b8" },
-  ember: { name: "Ember", pack: "sands", swatch: "#d07a3a", fill: "#d07a3a" },
-  ocean: { name: "Ocean", pack: "sands", swatch: "#4aa3ad", fill: "#4aa3ad" },
+const CHIMES = {
+  hush: { name: "Hush", pack: null, blurb: "System default", notes: [440] },
+  bell: { name: "Bell", pack: "chimes", blurb: "A clear strike", notes: [784, 1176] },
+  wood: { name: "Wood", pack: "chimes", blurb: "A low knock", notes: [196, 247] },
+  glass: { name: "Glass", pack: "chimes", blurb: "A thin ring", notes: [988, 1480, 1976] },
 };
 
 const PRESETS = [
-  { id: "classic", name: "Classic", palette: "teal", metal: "brass", sand: "gold" },
-  { id: "night", name: "Night desk", palette: "graphite", metal: "silver", sand: "pale" },
-  { id: "garden", name: "Garden", palette: "matcha", metal: "brass", sand: "gold" },
-  { id: "theatre", name: "Theatre", palette: "dusk", metal: "ink", sand: "pale" },
-  { id: "kiln", name: "Kiln", palette: "ember", metal: "rose", sand: "ember" },
+  { id: "starter", name: "Starter", form: "classic", face: "both", chime: "hush" },
+  { id: "needle", name: "Needle watch", form: "needle", face: "digits", chime: "glass" },
+  { id: "twin", name: "Twin desk", form: "twin", face: "sand", chime: "wood" },
+  { id: "orb", name: "Orb ring", form: "orb", face: "ring", chime: "bell" },
+  { id: "monument", name: "Monument", form: "monument", face: "both", chime: "bell" },
 ];
 
 const PACKS = {
-  studio: {
-    id: "studio",
-    name: "Studio",
-    price: 8,
+  atelier: {
+    id: "atelier",
+    name: "Atelier",
+    price: 11,
     featured: true,
-    blurb: "Every colorway, metal, and sand. The whole wardrobe, one unlock.",
-    chips: ["#4a5560", "#4f7a4a", "#5a4f86", "#a45a38", "#9aa4ad", "#b87878", "#efe0b8", "#d07a3a"],
+    blurb: "Every form, face, and chime. The desk you keep looking at.",
   },
-  colorways: {
-    id: "colorways",
-    name: "Colorways",
+  forms: {
+    id: "forms",
+    name: "Forms",
+    price: 5,
+    blurb: "Needle, Twin, Orb, Monument. A different object in the menu bar.",
+  },
+  faces: {
+    id: "faces",
+    name: "Faces",
     price: 4,
-    blurb: "Graphite, Matcha, Dusk, and Ember on the line and windows.",
-    chips: ["#4a5560", "#4f7a4a", "#5a4f86", "#a45a38"],
+    blurb: "Sand only, digits, and the emptying ring.",
   },
-  metals: {
-    id: "metals",
-    name: "Metals",
-    price: 3,
-    blurb: "Silver, Ink, and Rose caps on the hourglass.",
-    chips: ["#9aa4ad", "#1e3036", "#b87878"],
-  },
-  sands: {
-    id: "sands",
-    name: "Sands",
-    price: 3,
-    blurb: "Pale, Ember, and Ocean sand in the glass.",
-    chips: ["#efe0b8", "#d07a3a", "#4aa3ad"],
+  chimes: {
+    id: "chimes",
+    name: "Chimes",
+    price: 4,
+    blurb: "Bell, wood, and glass when a timer ends.",
   },
 };
 
 const $ = (id) => document.getElementById(id);
 
 const state = {
-  palette: "teal",
-  metal: "brass",
-  sand: "gold",
+  form: "classic",
+  face: "both",
+  chime: "hush",
   cart: loadCart(),
 };
 
@@ -149,69 +105,59 @@ function saveCart() {
 
 function packsForLook() {
   const needed = new Set();
-  const palettePack = PALETTES[state.palette].pack;
-  const metalPack = METALS[state.metal].pack;
-  const sandPack = SANDS[state.sand].pack;
-  if (palettePack) needed.add(palettePack);
-  if (metalPack) needed.add(metalPack);
-  if (sandPack) needed.add(sandPack);
+  if (FORMS[state.form].pack) needed.add(FORMS[state.form].pack);
+  if (FACES[state.face].pack) needed.add(FACES[state.face].pack);
+  if (CHIMES[state.chime].pack) needed.add(CHIMES[state.chime].pack);
   return [...needed];
 }
 
 function lookPrice() {
-  if (state.cart.includes("studio")) return 0;
+  if (state.cart.includes("atelier")) return 0;
   return packsForLook()
     .filter((id) => !state.cart.includes(id))
     .reduce((sum, id) => sum + PACKS[id].price, 0);
 }
 
 function cartTotal() {
-  if (state.cart.includes("studio")) return PACKS.studio.price;
+  if (state.cart.includes("atelier")) return PACKS.atelier.price;
   return state.cart.reduce((sum, id) => sum + PACKS[id].price, 0);
 }
 
 function activePreset() {
   return PRESETS.find((p) =>
-    p.palette === state.palette && p.metal === state.metal && p.sand === state.sand
+    p.form === state.form && p.face === state.face && p.chime === state.chime
   );
 }
 
 function lookTitle() {
-  const preset = activePreset();
-  if (preset) return preset.name;
-  return `${PALETTES[state.palette].name} · ${METALS[state.metal].name} · ${SANDS[state.sand].name}`;
+  return activePreset()?.name
+    || `${FORMS[state.form].name} · ${FACES[state.face].name} · ${CHIMES[state.chime].name}`;
+}
+
+function formMarkup() {
+  return `<svg class="hg-form" viewBox="0 0 42 42" aria-hidden="true">${FORMS[state.form].svg}</svg>`;
 }
 
 function applyLook() {
   const root = $("storePreview");
-  const palette = PALETTES[state.palette];
-  const metal = METALS[state.metal];
-  const sand = SANDS[state.sand];
-  const vars = {
-    ...palette.vars,
-    "--hg-glass": metal.glass,
-    "--hg-stroke": state.metal === "brass" ? palette.vars["--accent"] : metal.stroke,
-    "--hg-cap": metal.cap,
-    "--hg-sand": sand.fill,
-  };
-  for (const [key, value] of Object.entries(vars)) {
-    root.style.setProperty(key, value);
-  }
+  root.dataset.face = state.face;
+  root.dataset.form = state.form;
+  $("storeIconGlass").innerHTML = formMarkup();
+  $("storeBigGlass").innerHTML = formMarkup();
 }
 
 function money(n) {
   return `$${n}`;
 }
 
-function renderSwatches(host, items, selected, onPick) {
+function renderChoices(host, items, selected, onPick) {
   host.innerHTML = "";
   for (const [id, item] of Object.entries(items)) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "swatch" + (id === selected ? " on" : "");
-    btn.style.setProperty("--swatch", item.swatch);
-    const tag = item.pack ? "" : "<em>In</em>";
-    btn.innerHTML = `<i></i><span>${item.name}</span>${tag}`;
+    btn.className = "choice" + (id === selected ? " on" : "");
+    const lock = item.pack ? `<em>${money(PACKS[item.pack].price)}</em>` : "<em>In</em>";
+    btn.innerHTML = `<strong>${item.name}</strong><span>${item.blurb}</span>${lock}`;
     btn.addEventListener("click", () => onPick(id));
     host.appendChild(btn);
   }
@@ -221,56 +167,55 @@ function renderPresets() {
   const current = activePreset();
   $("presets").innerHTML = PRESETS.map((p) => `
     <button type="button" class="preset${current && current.id === p.id ? " on" : ""}" data-preset="${p.id}">
-      <i style="background:${PALETTES[p.palette].swatch}"></i>
-      ${p.name}
+      ${p.name}${p.id === "starter" ? "" : ""}
     </button>
   `).join("");
   $("presets").querySelectorAll("[data-preset]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const p = PRESETS.find((x) => x.id === btn.dataset.preset);
-      state.palette = p.palette;
-      state.metal = p.metal;
-      state.sand = p.sand;
+      state.form = p.form;
+      state.face = p.face;
+      state.chime = p.chime;
       refresh();
+      if (p.chime !== "hush") playChime(p.chime);
     });
   });
 }
 
 function renderControls() {
-  renderSwatches($("paletteSwatches"), PALETTES, state.palette, (id) => {
-    state.palette = id;
+  renderChoices($("formChoices"), FORMS, state.form, (id) => {
+    state.form = id;
     refresh();
   });
-  renderSwatches($("metalSwatches"), METALS, state.metal, (id) => {
-    state.metal = id;
+  renderChoices($("faceChoices"), FACES, state.face, (id) => {
+    state.face = id;
     refresh();
   });
-  renderSwatches($("sandSwatches"), SANDS, state.sand, (id) => {
-    state.sand = id;
+  renderChoices($("chimeChoices"), CHIMES, state.chime, (id) => {
+    state.chime = id;
     refresh();
+    playChime(id);
   });
 }
 
 function renderTotal() {
   $("lookName").textContent = lookTitle();
-  const needed = packsForLook().filter((id) => !state.cart.includes(id) && !state.cart.includes("studio"));
+  const needed = packsForLook().filter((id) => !state.cart.includes(id) && !state.cart.includes("atelier"));
   if (!needed.length) {
-    $("storeTotal").textContent = "Included, or already in your cart";
+    $("storeTotal").textContent = "This one is free, or already in your cart";
     $("addLook").hidden = true;
   } else {
-    $("storeTotal").textContent = `${needed.map((id) => PACKS[id].name).join(" + ")} · ${money(lookPrice())}`;
+    $("storeTotal").textContent = `Unlock ${needed.map((id) => PACKS[id].name).join(" + ")} to keep it · ${money(lookPrice())}`;
     $("addLook").hidden = false;
-    $("addLook").textContent = `Add ${needed.map((id) => PACKS[id].name).join(" + ")} · ${money(lookPrice())}`;
+    $("addLook").textContent = `Keep this on the Mac · ${money(lookPrice())}`;
   }
 }
 
 function renderPacks() {
   $("packGrid").innerHTML = Object.values(PACKS).map((pack) => {
-    const owned = state.cart.includes(pack.id) || (pack.id !== "studio" && state.cart.includes("studio"));
-    const chips = pack.chips.map((c) => `<i style="background:${c}"></i>`).join("");
+    const owned = state.cart.includes(pack.id) || (pack.id !== "atelier" && state.cart.includes("atelier"));
     return `
     <li class="${pack.featured ? "featured" : ""}">
-      <div class="pack-chips">${chips}</div>
       <h3>${pack.name}</h3>
       <p>${pack.blurb}</p>
       <div class="pack-foot">
@@ -311,9 +256,9 @@ function renderCart() {
 }
 
 function addPack(id) {
-  if (id === "studio") {
-    state.cart = ["studio"];
-  } else if (!state.cart.includes("studio") && !state.cart.includes(id)) {
+  if (id === "atelier") {
+    state.cart = ["atelier"];
+  } else if (!state.cart.includes("atelier") && !state.cart.includes(id)) {
     state.cart.push(id);
   }
   saveCart();
@@ -321,12 +266,34 @@ function addPack(id) {
 }
 
 function addLook() {
-  if (state.cart.includes("studio")) return;
+  if (state.cart.includes("atelier")) return;
   for (const id of packsForLook()) {
     if (!state.cart.includes(id)) state.cart.push(id);
   }
   saveCart();
   refresh();
+}
+
+let audio;
+function playChime(id) {
+  const spec = CHIMES[id];
+  if (!spec || id === "hush") return;
+  audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+  if (audio.state === "suspended") audio.resume();
+  const now = audio.currentTime;
+  spec.notes.forEach((freq, i) => {
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
+    osc.type = id === "wood" ? "triangle" : "sine";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.02 + i * 0.08);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.7 + i * 0.12);
+    osc.connect(gain);
+    gain.connect(audio.destination);
+    osc.start(now + i * 0.08);
+    osc.stop(now + 0.85 + i * 0.12);
+  });
 }
 
 function refresh() {
@@ -339,7 +306,7 @@ function refresh() {
 }
 
 $("addLook").addEventListener("click", addLook);
-$("addStudio").addEventListener("click", () => addPack("studio"));
+$("addStudio").addEventListener("click", () => addPack("atelier"));
 
 $("openCheckout").addEventListener("click", () => {
   $("checkoutSummary").textContent = state.cart
@@ -358,7 +325,7 @@ $("checkoutForm").addEventListener("submit", (event) => {
     email: $("orderEmail").value.trim(),
     items: [...state.cart],
     total: cartTotal(),
-    look: { palette: state.palette, metal: state.metal, sand: state.sand },
+    look: { form: state.form, face: state.face, chime: state.chime },
     at: new Date().toISOString(),
   };
   const prev = JSON.parse(localStorage.getItem("sandpull.orders") || "[]");
