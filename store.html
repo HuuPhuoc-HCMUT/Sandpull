@@ -27,111 +27,66 @@
     </nav>
   </header>
 
-  <main class="store">
-    <section class="store-hero">
-      <div>
-        <p class="eyebrow">Store</p>
-        <h1>The icon you live with</h1>
-        <p class="lede">You will look at this forty times a day. The free app keeps the starter glass. These change the body, the menu bar, and the sound when the sand runs out.</p>
-        <p class="fine" id="orderDone" hidden></p>
-      </div>
-      <div class="store-hero-meta">
-        <p class="eyebrow">On your Mac</p>
-        <p class="look-name" id="lookName">Starter glass</p>
-        <p class="look-price" id="storeTotal">Included</p>
-      </div>
-    </section>
-
-    <section class="store-stage">
-      <div class="store-preview" id="storePreview" data-face="both">
-        <div class="desktop">
-          <div class="menubar">
-            <span class="apple" aria-hidden="true"></span>
-            <span class="mb-app">Finder</span>
-            <span class="mb-spacer"></span>
-            <span class="status-icon" id="storeFace">
-              <span class="face-ring" aria-hidden="true"></span>
-              <span class="face-glass" id="storeIconGlass"></span>
-              <span class="status-time">24:12</span>
-            </span>
-            <span class="mb-spacer"></span>
-            <span class="mb-clock">16:39</span>
-          </div>
-          <div class="store-canvas">
-            <div class="store-dim" aria-hidden="true"></div>
-            <div class="line store-line"></div>
-            <div class="glass store-glass" id="storeBigGlass"></div>
-            <div class="bubble store-bubble">
-              <strong>25 min</strong>
-              <span>17:04</span>
-            </div>
-            <div class="trash store-trash" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M4.5 7h15M9 7V5.2A1.2 1.2 0 0 1 10.2 4h3.6A1.2 1.2 0 0 1 15 5.2V7"/>
-                <path class="can" d="M7 7l.85 13.1A1.4 1.4 0 0 0 9.24 21.4h5.52a1.4 1.4 0 0 0 1.39-1.3L17 7"/>
-                <path d="M10 11v6.2M14 11v6.2"/>
-              </svg>
-            </div>
+  <main class="store-desk">
+    <div class="store-preview" id="storePreview" data-face="both" data-form="classic">
+      <div class="desktop">
+        <div class="menubar">
+          <span class="apple" aria-hidden="true"></span>
+          <span class="mb-app">Finder</span>
+          <span class="mb-spacer"></span>
+          <span class="status-icon" id="storeFace">
+            <span class="face-ring" aria-hidden="true"></span>
+            <span class="face-glass" id="storeIconGlass"></span>
+            <span class="status-time">24:12</span>
+          </span>
+          <span class="mb-spacer"></span>
+          <span class="mb-clock">16:39</span>
+        </div>
+        <div class="store-canvas">
+          <div class="store-dim" aria-hidden="true"></div>
+          <div class="store-line"></div>
+          <div class="store-glass" id="storeBigGlass"></div>
+          <div class="store-bubble">
+            <strong>25 min</strong>
+            <span>17:04</span>
           </div>
         </div>
       </div>
+    </div>
+
+    <aside class="store-panel">
+      <p class="eyebrow">Store</p>
+      <h1 id="lookName">Starter</h1>
+      <p class="look-price" id="storeTotal">The free glass. Included.</p>
+      <p class="fine" id="orderDone" hidden></p>
 
       <div class="presets" id="presets"></div>
 
-      <div class="store-controls">
-        <fieldset>
-          <legend>Form, the body in the menu bar</legend>
-          <div class="choice-grid" id="formChoices"></div>
-        </fieldset>
-        <fieldset>
-          <legend>Face, what the bar shows</legend>
-          <div class="choice-grid" id="faceChoices"></div>
-        </fieldset>
-        <fieldset>
-          <legend>Chime, tap to hear the ending</legend>
-          <div class="choice-grid" id="chimeChoices"></div>
-        </fieldset>
-      </div>
+      <fieldset>
+        <legend>Form</legend>
+        <div class="pills" id="formChoices"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Face</legend>
+        <div class="pills" id="faceChoices"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Chime</legend>
+        <div class="pills" id="chimeChoices"></div>
+      </fieldset>
 
       <div class="store-buy">
-        <button type="button" class="btn-save" id="addLook">Keep this on the Mac</button>
-        <button type="button" class="btn-quiet" id="addStudio">Atelier, $11, every form, face, and chime</button>
+        <button type="button" class="btn-save" id="addLook">Keep this · $5</button>
+        <button type="button" class="btn-quiet" id="addStudio">Atelier $11</button>
       </div>
-    </section>
 
-    <section class="why-buy">
-      <article>
-        <p class="eyebrow">Form</p>
-        <h2>A different object</h2>
-        <p>Needle, Twin, Orb, Monument. Not a tint on the same glass. The thing in the menu bar changes.</p>
-      </article>
-      <article>
-        <p class="eyebrow">Face</p>
-        <h2>A different glance</h2>
-        <p>Sand only. Digits only. A ring that empties. The countdown you see without opening a window.</p>
-      </article>
-      <article>
-        <p class="eyebrow">Chime</p>
-        <h2>A different ending</h2>
-        <p>Bell, wood, glass. Press play here. That sound is what you buy for every timer that finishes.</p>
-      </article>
-    </section>
-
-    <section class="store-packs" id="packs">
-      <div class="section-copy">
-        <p class="eyebrow">Unlocks</p>
-        <h2>Pay once. Keep it.</h2>
-        <p>Atelier is the whole desk. Or take the one piece you just tried. A license email follows when card checkout is live.</p>
+      <div class="store-cart" id="cart" hidden>
+        <ul id="cartRows"></ul>
+        <p class="store-total" id="cartTotal"></p>
+        <button type="button" class="btn-save" id="openCheckout">Checkout</button>
       </div>
-      <ul class="pack-grid" id="packGrid"></ul>
-    </section>
+    </aside>
   </main>
-
-  <aside class="cart-dock" id="cart" hidden>
-    <ul id="cartRows"></ul>
-    <p class="store-total" id="cartTotal"></p>
-    <button type="button" class="btn-save" id="openCheckout">Checkout</button>
-  </aside>
 
   <dialog class="checkout" id="checkout">
     <form id="checkoutForm" method="dialog">
@@ -140,21 +95,13 @@
       <p class="fine" id="checkoutSummary"></p>
       <label>Name <input id="orderName" name="name" type="text" required autocomplete="name"></label>
       <label>Email <input id="orderEmail" name="email" type="email" required autocomplete="email"></label>
-      <p class="fine">Card payments open after Sandpull is notarized. This saves your order. We will email a license key to unlock these in the app.</p>
+      <p class="fine">Card payments open after Sandpull is notarized. This saves your order.</p>
       <div class="hero-actions">
         <button type="submit" class="btn-save" id="placeOrder">Place order</button>
         <button type="button" class="btn-quiet" id="closeCheckout">Cancel</button>
       </div>
     </form>
   </dialog>
-
-  <footer>
-    <span>Sandpull · inspired by <a href="https://maddin.io/gestimer/" rel="noopener noreferrer">Gestimer</a></span>
-    <span class="foot-links">
-      <a href="guide.html">Guide</a>
-      <a href="store.html">Store</a>
-    </span>
-  </footer>
 
   <script src="store.js"></script>
 </body>

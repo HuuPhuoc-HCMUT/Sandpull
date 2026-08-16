@@ -150,14 +150,16 @@ function money(n) {
   return `$${n}`;
 }
 
-function renderChoices(host, items, selected, onPick) {
+function renderChoices(host, items, selected, onPick, withGlyph) {
   host.innerHTML = "";
   for (const [id, item] of Object.entries(items)) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "choice" + (id === selected ? " on" : "");
-    const lock = item.pack ? `<em>${money(PACKS[item.pack].price)}</em>` : "<em>In</em>";
-    btn.innerHTML = `<strong>${item.name}</strong><span>${item.blurb}</span>${lock}`;
+    btn.className = "opt" + (id === selected ? " on" : "");
+    const glyph = withGlyph
+      ? `<svg class="hg-form" viewBox="0 0 42 42" aria-hidden="true">${item.svg}</svg>`
+      : "";
+    btn.innerHTML = `${glyph}<span>${item.name}</span>`;
     btn.addEventListener("click", () => onPick(id));
     host.appendChild(btn);
   }
@@ -186,7 +188,7 @@ function renderControls() {
   renderChoices($("formChoices"), FORMS, state.form, (id) => {
     state.form = id;
     refresh();
-  });
+  }, true);
   renderChoices($("faceChoices"), FACES, state.face, (id) => {
     state.face = id;
     refresh();
@@ -202,42 +204,22 @@ function renderTotal() {
   $("lookName").textContent = lookTitle();
   const needed = packsForLook().filter((id) => !state.cart.includes(id) && !state.cart.includes("atelier"));
   if (!needed.length) {
-    $("storeTotal").textContent = "This one is free, or already in your cart";
+    $("storeTotal").textContent = "The free glass. Included.";
     $("addLook").hidden = true;
   } else {
-    $("storeTotal").textContent = `Unlock ${needed.map((id) => PACKS[id].name).join(" + ")} to keep it · ${money(lookPrice())}`;
+    $("storeTotal").textContent = `${needed.map((id) => PACKS[id].name).join(" + ")} to keep this look`;
     $("addLook").hidden = false;
-    $("addLook").textContent = `Keep this on the Mac · ${money(lookPrice())}`;
+    $("addLook").textContent = `Keep this · ${money(lookPrice())}`;
   }
-}
-
-function renderPacks() {
-  $("packGrid").innerHTML = Object.values(PACKS).map((pack) => {
-    const owned = state.cart.includes(pack.id) || (pack.id !== "atelier" && state.cart.includes("atelier"));
-    return `
-    <li class="${pack.featured ? "featured" : ""}">
-      <h3>${pack.name}</h3>
-      <p>${pack.blurb}</p>
-      <div class="pack-foot">
-        <p class="store-total">${money(pack.price)}</p>
-        <button type="button" class="btn-save" data-pack="${pack.id}">${owned ? "In cart" : "Add"}</button>
-      </div>
-    </li>`;
-  }).join("");
-  $("packGrid").querySelectorAll("[data-pack]").forEach((btn) => {
-    btn.addEventListener("click", () => addPack(btn.dataset.pack));
-  });
 }
 
 function renderCart() {
   const cart = $("cart");
   if (!state.cart.length) {
     cart.hidden = true;
-    document.body.classList.remove("has-cart");
     return;
   }
   cart.hidden = false;
-  document.body.classList.add("has-cart");
   $("cartRows").innerHTML = state.cart.map((id) => `
     <li>
       <span>${PACKS[id].name}</span>
@@ -301,7 +283,6 @@ function refresh() {
   renderPresets();
   renderControls();
   renderTotal();
-  renderPacks();
   renderCart();
 }
 
