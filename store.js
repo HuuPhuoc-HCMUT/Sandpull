@@ -36,6 +36,10 @@ function lookTitle() {
     || `${FORMS[state.form].name} · ${FACES[state.face].name}`;
 }
 
+function lookCode() {
+  return `sp-${state.form}-${state.face}-${state.chime}`;
+}
+
 function applyLook() {
   const root = $("storePreview");
   root.dataset.face = state.face;
@@ -44,7 +48,7 @@ function applyLook() {
   $("storeIconGlass").innerHTML = svg;
   $("storeBigGlass").innerHTML = svg;
   $("lookName").textContent = lookTitle();
-  $("applyLook").href = `sandpull://look?form=${state.form}&face=${state.face}&chime=${state.chime}`;
+  $("lookCode").textContent = lookCode();
 }
 
 function renderChoices(host, items, selected, onPick, withGlyph) {
@@ -102,5 +106,22 @@ function playChime(id) {
     osc.stop(now + 0.8 + i * 0.1);
   });
 }
+
+$("copyCode").addEventListener("click", async () => {
+  const code = lookCode();
+  try {
+    await navigator.clipboard.writeText(code);
+  } catch {
+    const field = document.createElement("textarea");
+    field.value = code;
+    document.body.appendChild(field);
+    field.select();
+    document.execCommand("copy");
+    field.remove();
+  }
+  const done = $("copyDone");
+  done.hidden = false;
+  done.textContent = `Copied ${code}. Paste it in Settings.`;
+});
 
 refresh();

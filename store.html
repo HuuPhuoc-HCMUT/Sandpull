@@ -53,26 +53,28 @@
     <aside class="store-panel">
       <p class="eyebrow">Looks · Free</p>
       <h1 id="lookName">Starter</h1>
-      <p class="look-price" id="storeTotal">Apply this in Sandpull on this Mac.</p>
+      <p class="look-price">Copy the code, then paste it at the bottom of Settings.</p>
 
       <div class="presets" id="presets"></div>
 
-      <fieldset>
-        <legend>Form</legend>
+      <div class="look-row">
+        <span>Form</span>
         <div class="pills" id="formChoices"></div>
-      </fieldset>
-      <fieldset>
-        <legend>Face</legend>
+      </div>
+      <div class="look-row">
+        <span>Face</span>
         <div class="pills" id="faceChoices"></div>
-      </fieldset>
-      <fieldset>
-        <legend>Chime</legend>
+      </div>
+      <div class="look-row">
+        <span>Chime</span>
         <div class="pills" id="chimeChoices"></div>
-      </fieldset>
+      </div>
 
       <div class="store-buy">
-        <a class="btn-save" id="applyLook" href="sandpull://look?form=classic&amp;face=both&amp;chime=hush">Apply in Sandpull</a>
+        <code class="look-code" id="lookCode">sp-classic-both-hush</code>
+        <button type="button" class="btn-save" id="copyCode">Copy code</button>
       </div>
+      <p class="fine" id="copyDone" hidden>Copied. Paste it in Settings.</p>
     </aside>
   </main>
 
