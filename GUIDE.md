@@ -61,7 +61,7 @@ This is not the list. Clicking the icon opens the list. Releasing a pull opens S
 
 Click the hourglass (without dragging) to open the list.
 
-**Active** — running timers. Teal pill = time left. Click a row to edit. The × removes it.
+**Active** — running timers. Each row reads like Gestimer: **in** remaining time, **at** the end clock, then the name. Click a row to edit. Hover to remove.
 
 **Done** — expired timers stay here until you press **Done** on the row or **Clear done**.
 
