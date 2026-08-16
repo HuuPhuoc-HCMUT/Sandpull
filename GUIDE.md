@@ -107,6 +107,7 @@ Right-click the hourglass → **Settings…** (or `,`). Click outside the window
 
 | Setting | Default | What it does |
 |---|---|---|
+| List type | Gestimer | Small / Gestimer / Large — title size in the timer list |
 | List slider | On | Duration bar when adding from the list |
 | Recent names | On | Suggest labels you already used |
 | Save presets | On | `5m` `10m` `15m` `30m` `1h` on the Save window |
