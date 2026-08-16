@@ -954,13 +954,17 @@ body.has-cart .store { padding-bottom: 40px; }
   justify-content: center;
 }
 .store-panel h1 {
-  font-size: clamp(28px, 3vw, 40px);
-  margin: 0 0 6px;
+  font-size: 28px;
+  margin: 0 0 4px;
 }
 .store-panel fieldset {
   border: 0;
-  margin: 0 0 12px;
+  margin: 0 0 8px;
   padding: 0;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  align-items: center;
+  gap: 8px;
 }
 .store-panel legend {
   font-size: 11px;
@@ -968,9 +972,11 @@ body.has-cart .store { padding-bottom: 40px; }
   text-transform: uppercase;
   color: var(--muted);
   font-weight: 650;
-  margin-bottom: 8px;
+  margin: 0;
 }
-.is-store .presets { margin: 14px 0 16px; }
+.is-store .presets { margin: 10px 0 12px; }
+.is-store .opt { padding: 5px 10px 5px 7px; font-size: 12px; }
+.is-store .preset { padding: 5px 11px; font-size: 12px; }
 .pills { display: flex; flex-wrap: wrap; gap: 6px; }
 .opt {
   display: inline-flex;
