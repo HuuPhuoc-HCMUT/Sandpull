@@ -943,9 +943,16 @@ body.has-cart .store { padding-bottom: 40px; }
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 400px);
-  gap: 28px;
-  padding: 0 5vw 20px;
+  grid-template-columns: minmax(0, 540px) minmax(300px, 360px);
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 6vw 32px;
+}
+.is-store .store-preview {
+  width: min(100%, 540px, calc(58vh * 1.6));
+  aspect-ratio: 16 / 10;
+  height: auto;
 }
 .store-panel {
   display: flex;
@@ -1121,7 +1128,8 @@ footer a { text-decoration: none; }
 @media (max-width: 900px) {
   .hero, .try, .feature, .feature.flip, .store-hero, .store-tease, .store-controls, .why-buy, .store-desk { grid-template-columns: 1fr; }
   .is-store { height: auto; overflow: auto; }
-  .store-preview { min-height: 280px; aspect-ratio: 16 / 10; }
+  .is-store .store-preview,
+  .store-preview { min-height: 220px; width: 100%; }
   .feature.flip .feature-text { order: 0; }
   .step-grid { grid-template-columns: 1fr 1fr; }
   .pack-grid { grid-template-columns: 1fr 1fr; }
