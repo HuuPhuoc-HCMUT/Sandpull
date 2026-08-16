@@ -49,7 +49,9 @@ The Save window is what appears when you let go.
 2. Pick a **Label** chip, or type your own
 3. **Save** creates a real timer. **Cancel** throws the pull away
 
-Chips remember titles you have used, and a history chip can restore the last duration for that name.
+Chips remember titles you have used, and a history chip can restore the last duration for that name. **Cmd+C / Cmd+V / Cmd+A** work in the text field.
+
+In Settings → **List & Save** you can hide the time chips or the recent-name chips. A Look code also changes the shape of this window.
 
 This is not the list. Clicking the icon opens the list. Releasing a pull opens Save.
 
@@ -63,7 +65,7 @@ Click the hourglass (without dragging) to open the list.
 
 **Done** — expired timers stay here until you press **Done** on the row or **Clear done**.
 
-At the bottom you can add a timer without pulling: type a name, set the slider, tap a chip, then **Add**.
+At the bottom you can add a timer without pulling: type a name, set the slider, tap a chip, then **Add**. Settings → **List & Save** can hide the slider or the name chips.
 
 ⓘ starts the guided tour. **Quit** leaves the app.
 
@@ -91,7 +93,7 @@ A sound can play if Notification Sound is on. System banners stay quiet while th
 
 ## 7. Settings
 
-Right-click the hourglass → **Settings…** (or `,`).
+Right-click the hourglass → **Settings…** (or `,`). Click outside the window to close it. Text fields accept **Cmd+C / Cmd+V / Cmd+A**.
 
 **General**
 
@@ -100,6 +102,14 @@ Right-click the hourglass → **Settings…** (or `,`).
 | Notification Sound | On | Play a sound when a timer ends |
 | Sync with Reminders | Off | Add each new timer to Apple Reminders |
 | Launch at Login | Off | Start Sandpull when you log in |
+
+**List & Save** — these change the timer list and the Save window.
+
+| Setting | Default | What it does |
+|---|---|---|
+| List slider | On | Duration bar when adding from the list |
+| Recent names | On | Suggest labels you already used |
+| Save presets | On | `5m` `10m` `15m` `30m` `1h` on the Save window |
 
 **Advanced**
 
@@ -114,7 +124,13 @@ Right-click the hourglass → **Settings…** (or `,`).
 | Half-hour highlight | On | Sand color when the end time hits :00 or :30 |
 | Haptic on cancel | On | Click when you enter the trash zone |
 
-**Reset to defaults** restores Advanced only.
+**Looks**
+
+On the [Looks page](https://huuphuoc-hcmut.github.io/Sandpull/store.html), pick a form, face, and chime, then **Copy code**. Paste that code (for example `sp-monument-both-bell`) at the bottom of Settings and press **Apply**.
+
+The code changes the hourglass, the menu bar face, the expiry sound, and the chrome of the list and Save windows (corners and chips).
+
+**Reset to defaults** restores Advanced, List & Save, and Looks.
 
 ---
 

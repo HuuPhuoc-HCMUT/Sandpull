@@ -46,7 +46,7 @@
       <header class="guide-hero">
         <p class="eyebrow">Tutorial  v1.0</p>
         <h1>How Sandpull works</h1>
-        <p class="lede">The whole app is an hourglass in the menu bar. The pull gesture is inspired by <a href="https://maddin.io/gestimer/" rel="noopener noreferrer">Gestimer</a>. This page is the written tour: the same four moves as <em>How it works</em> in the app, plus the list, expiry, and settings.</p>
+        <p class="lede">The whole app is an hourglass in the menu bar. The pull gesture is inspired by <a href="https://maddin.io/gestimer/" rel="noopener noreferrer">Gestimer</a>. This page is the written tour: the same four moves as <em>How it works</em> in the app, plus the list, expiry, settings, and Looks.</p>
       </header>
 
       <section id="first">
@@ -99,7 +99,8 @@
           <li>Pick a <strong>Label</strong> chip, or type your own</li>
           <li><strong>Save</strong> creates a real timer. <strong>Cancel</strong> throws the pull away</li>
         </ol>
-        <p>Chips remember titles you have used. A history chip can also restore the last duration for that name.</p>
+        <p>Chips remember titles you have used. A history chip can also restore the last duration for that name. <kbd>⌘C</kbd> <kbd>⌘V</kbd> <kbd>⌘A</kbd> work in the text field.</p>
+        <p>In Settings → <strong>List &amp; Save</strong> you can hide the time chips or the recent-name chips. A Look code also changes the shape of this window.</p>
       </section>
 
       <section id="list">
@@ -113,7 +114,7 @@
           <li><strong>Active:</strong> teal pill is time left. Click a row to edit. × removes it.</li>
           <li><strong>Done:</strong> expired timers stay until you press <strong>Done</strong> or <strong>Clear done</strong>.</li>
         </ul>
-        <p>At the bottom you can add a timer without pulling: type a name, set the slider, tap a chip, then <strong>Add</strong>.</p>
+        <p>At the bottom you can add a timer without pulling: type a name, set the slider, tap a chip, then <strong>Add</strong>. Settings → <strong>List &amp; Save</strong> can hide the slider or the name chips.</p>
         <p>ⓘ starts the guided tour. <strong>Quit</strong> leaves the app.</p>
       </section>
 
@@ -136,7 +137,7 @@
 
       <section id="settings">
         <h2><span class="num">7</span> Settings</h2>
-        <p>Right-click the hourglass → <strong>Settings…</strong> (shortcut <kbd>,</kbd>).</p>
+        <p>Right-click the hourglass → <strong>Settings…</strong> (shortcut <kbd>,</kbd>). Click outside the window to close it. Text fields accept <kbd>⌘C</kbd> <kbd>⌘V</kbd> <kbd>⌘A</kbd>.</p>
         <h3>General</h3>
         <table>
           <thead><tr><th>Setting</th><th>Default</th><th>What it does</th></tr></thead>
@@ -144,6 +145,16 @@
             <tr><td>Notification Sound</td><td>On</td><td>Play a sound when a timer ends</td></tr>
             <tr><td>Sync with Reminders</td><td>Off</td><td>Add each new timer to Apple Reminders</td></tr>
             <tr><td>Launch at Login</td><td>Off</td><td>Start Sandpull when you log in</td></tr>
+          </tbody>
+        </table>
+        <h3>List &amp; Save</h3>
+        <p>These change the timer list and the Save window.</p>
+        <table>
+          <thead><tr><th>Setting</th><th>Default</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>List slider</td><td>On</td><td>Duration bar when adding from the list</td></tr>
+            <tr><td>Recent names</td><td>On</td><td>Suggest labels you already used</td></tr>
+            <tr><td>Save presets</td><td>On</td><td><code>5m</code> <code>10m</code> <code>15m</code> <code>30m</code> <code>1h</code> on the Save window</td></tr>
           </tbody>
         </table>
         <h3>Advanced</h3>
@@ -160,7 +171,10 @@
             <tr><td>Haptic on cancel</td><td>On</td><td>Click when you enter the trash zone</td></tr>
           </tbody>
         </table>
-        <p><strong>Reset to defaults</strong> restores Advanced only.</p>
+        <h3>Looks</h3>
+        <p>On the <a href="store.html">Looks page</a>, pick a form, face, and chime, then <strong>Copy code</strong>. Paste that code (for example <code>sp-monument-both-bell</code>) at the bottom of Settings and press <strong>Apply</strong>.</p>
+        <p>The code changes the hourglass, the menu bar face, the expiry sound, and the chrome of the list and Save windows.</p>
+        <p><strong>Reset to defaults</strong> restores Advanced, List &amp; Save, and Looks.</p>
       </section>
 
       <section id="tour">
