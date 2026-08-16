@@ -25,6 +25,13 @@ Open [http://localhost:4173](http://localhost:4173).
 
 ## Publish
 
+From the repo root:
+
+```bash
+make pages    # website only
+make ship     # rebuild DMG, then website + download
+```
+
 Live site: [https://huuphuoc-hcmut.github.io/Sandpull/](https://huuphuoc-hcmut.github.io/Sandpull/) (the `gh-pages` branch is this folder).
 
-Download file: `website/downloads/Sandpull.dmg` (built with `make dmg` from the repo root).
+Download file: `website/downloads/Sandpull.dmg`.
