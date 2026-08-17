@@ -67,7 +67,7 @@ Click the hourglass (without dragging) to open the list.
 
 At the bottom you can add a timer without pulling: type a name, set the slider, tap a chip, then press Return. Settings → **List & Save** can hide the slider or the name chips.
 
-ⓘ starts the guided tour. The gear opens Settings. **Quit** leaves the app.
+ⓘ and the gear sit at the top right: tour and Settings. **Quit** is at the bottom.
 
 ---
 
