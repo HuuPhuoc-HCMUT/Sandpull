@@ -1,11 +1,7 @@
 const $ = (id) => document.getElementById(id);
 
-function pad(n) {
-  return String(n).padStart(2, "0");
-}
-
 function formatClock(date) {
-  return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  return date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 }
 
 function endTime(minutes) {
@@ -16,8 +12,9 @@ function verbose(minutes) {
   if (minutes >= 60) {
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
-    if (!m) return h === 1 ? "1 hour" : `${h} hours`;
-    return `${h}h ${m}m`;
+    const hours = h === 1 ? "1 hour" : `${h} hours`;
+    if (!m) return hours;
+    return `${hours}, ${m === 1 ? "1 minute" : `${m} minutes`}`;
   }
   return minutes === 1 ? "1 minute" : `${minutes} minutes`;
 }
@@ -31,46 +28,113 @@ function short(minutes) {
   return `${minutes}m`;
 }
 
-function isQuarter(minutes) {
-  return endTime(minutes).getMinutes() % 15 === 0;
+function spoken(minutes) {
+  if (minutes < 60) return `${minutes} min`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (!m) return h === 1 ? "1 hr" : `${h} hr`;
+  return `${h} hr, ${m} min`;
+}
+
+// Same defaults as AppSettings / DurationMapper (Balanced, 24h).
+const DEAD_ZONE = 112;
+const SHORT_BAND = 0.18;
+const MAX_SECONDS = 24 * 3600;
+
+function mapped(t) {
+  const t1 = SHORT_BAND;
+  const rest = Math.max(0.01, 1 - t1);
+  const hour = 3600;
+  const midEnd = 3 * 3600;
+  const longEnd = 8 * 3600;
+  if (t <= t1) return (t / t1) * 1800;
+  const t2 = t1 + rest * 0.10;
+  const t3 = t2 + rest * 0.14;
+  const t4 = t3 + rest * 0.28;
+  if (t <= t2) return 1800 + ((t - t1) / (t2 - t1)) * (hour - 1800);
+  if (t <= t3) return hour + ((t - t2) / (t3 - t2)) * (midEnd - hour);
+  if (t <= t4) return midEnd + ((t - t3) / (t4 - t3)) * (longEnd - midEnd);
+  return longEnd + ((t - t4) / Math.max(0.01, 1 - t4)) * (MAX_SECONDS - longEnd);
+}
+
+function usableHeight(screenHeight) {
+  return Math.max(400, screenHeight - 24) - DEAD_ZONE;
+}
+
+function normalizedFromSeconds(seconds) {
+  const target = Math.min(MAX_SECONDS, Math.max(60, seconds));
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 28; i += 1) {
+    const mid = (lo + hi) / 2;
+    if (mapped(mid) < target) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+
+function pixelsFromSeconds(seconds, screenHeight) {
+  return DEAD_ZONE + normalizedFromSeconds(seconds) * usableHeight(screenHeight);
+}
+
+function rawSecondsFromDistance(px, screenHeight) {
+  const effective = px - DEAD_ZONE;
+  if (effective <= 0) return 0;
+  const t = Math.min(1, effective / usableHeight(screenHeight));
+  return Math.min(MAX_SECONDS, Math.max(60, Math.round(mapped(t) / 60) * 60));
+}
+
+function clockSlot(seconds, every) {
+  if (seconds <= 0) return null;
+  const end = new Date(Date.now() + seconds * 1000);
+  if (end.getMinutes() % every !== 0 || end.getSeconds() >= 2) return null;
+  return end.getHours() * 60 + end.getMinutes();
+}
+
+function alignToClock(seconds) {
+  const end = new Date(Date.now() + seconds * 1000);
+  const rem = end.getMinutes() % 15;
+  const toPrev = rem * 60 + end.getSeconds();
+  const toNext = (15 - rem) * 60 - end.getSeconds();
+  const notch = 98;
+  let aligned = seconds;
+  if (toPrev > 0 && toPrev <= notch && toPrev <= toNext) aligned = seconds - toPrev;
+  else if (toNext <= notch) aligned = seconds + toNext;
+  return Math.min(MAX_SECONDS, Math.max(60, aligned));
+}
+
+function stickToClockQuarter(seconds, px, screenHeight, heldQuarter) {
+  if (seconds <= 0) return 0;
+  const end = new Date(Date.now() + seconds * 1000);
+  const rem = end.getMinutes() % 15;
+  const toPrev = rem * 60 + end.getSeconds();
+  const toNext = (15 - rem) * 60 - end.getSeconds();
+  const prevDur = Math.max(60, seconds - toPrev);
+  const nextDur = Math.min(MAX_SECONDS, seconds + toNext);
+  let best = null;
+  for (const candidate of [prevDur, nextDur]) {
+    if (Math.abs(seconds - candidate) > 210) continue;
+    const dist = Math.abs(px - pixelsFromSeconds(candidate, screenHeight));
+    const slot = clockSlot(candidate, 15);
+    const band = heldQuarter != null && slot === heldQuarter ? 36 : 22;
+    if (dist <= band && (best == null || dist < best.dist)) {
+      best = { dur: candidate, dist };
+    }
+  }
+  return best ? best.dur : alignToClock(seconds);
+}
+
+function minutesFromDistance(px, screenHeight, heldQuarter) {
+  const raw = rawSecondsFromDistance(px, screenHeight);
+  if (raw <= 0) return 0;
+  return Math.round(stickToClockQuarter(raw, px, screenHeight, heldQuarter) / 60);
 }
 
 function isHalfHour(minutes) {
-  return endTime(minutes).getMinutes() % 30 === 0;
+  return clockSlot(minutes * 60, 30) != null;
 }
 
-const DEAD_ZONE = 48;
-
-function minutesFromDistance(px) {
-  const effective = px - DEAD_ZONE;
-  if (effective <= 0) return 0;
-  const t = Math.min(1, effective / 340);
-  const seconds = t <= 0.4
-    ? (t / 0.4) * 1800
-    : 1800 + ((t - 0.4) / 0.6) * 5400;
-  const mins = Math.min(120, Math.max(1, Math.round(seconds / 60)));
-  return stickToQuarter(mins, px);
-}
-
-function pixelsFromMinutes(minutes) {
-  const seconds = minutes * 60;
-  const t = seconds <= 1800
-    ? (seconds / 1800) * 0.4
-    : 0.4 + ((seconds - 1800) / 5400) * 0.6;
-  return DEAD_ZONE + Math.min(1, t) * 340;
-}
-
-function stickToQuarter(minutes, px) {
-  for (const delta of [0, -1, 1, -2, 2]) {
-    const candidate = minutes + delta;
-    if (candidate < 1 || candidate > 120) continue;
-    if (!isQuarter(candidate)) continue;
-    if (Math.abs(px - pixelsFromMinutes(candidate)) <= 22) return candidate;
-  }
-  return minutes;
-}
-
-const TRASH_CANCEL = 42;
+const TRASH_CANCEL = 58;
 
 function trashCenter(root) {
   return { x: root.clientWidth / 2, y: root.clientHeight - 80 };
@@ -79,19 +143,23 @@ function trashCenter(root) {
 function trashState(root, to, minutes) {
   const center = trashCenter(root);
   const d = Math.hypot(to.x - center.x, to.y - center.y);
-  const showDist = Math.max(root.clientHeight * 0.92, 260);
+  const showDist = Math.max(root.clientHeight / 2, 200);
   const dead = minutes <= 0;
   if (dead || d >= showDist) {
     return { scale: 0, alpha: 0, inCancel: false };
   }
   const t = 1 - Math.max(0, d - TRASH_CANCEL) / (showDist - TRASH_CANCEL);
   const eased = t * t;
-  const scale = 0.7 + eased * 1.05;
+  const scale = 1.05 + eased * 1.05;
   return {
     scale,
-    alpha: Math.min(1, (scale - 0.7) / 0.4 + 0.5),
+    alpha: Math.min(1, (scale - 1.05) / 0.4 + 0.5),
     inCancel: d < TRASH_CANCEL,
   };
+}
+
+function setDim(el, on) {
+  if (el) el.classList.toggle("on", !!on);
 }
 
 function placeTrash(el, state) {
@@ -124,13 +192,21 @@ function placeDrag(root, line, glass, bubble, from, to, minutes, trash) {
   glass.style.left = `${to.x}px`;
   glass.style.top = `${to.y}px`;
   glass.style.transform = `rotate(${(len * 0.038) * (180 / Math.PI)}deg)`;
-  bubble.style.opacity = dead || state.inCancel ? "0" : "1";
-  bubble.style.left = `${to.x}px`;
-  bubble.style.top = `${to.y}px`;
+  const hideBubble = dead || state.inCancel;
+  bubble.style.opacity = hideBubble ? "0" : "1";
+  const bw = bubble.offsetWidth || 96;
+  const bh = bubble.offsetHeight || 48;
+  let bx = to.x - bw - 38;
+  if (bx < 8) bx = to.x + 38;
+  if (bx + bw > root.clientWidth - 8) bx = Math.max(8, to.x - bw - 38);
+  let by = to.y - bh / 2;
+  by = Math.max(8, Math.min(by, root.clientHeight - bh - 8));
+  bubble.style.left = `${bx}px`;
+  bubble.style.top = `${by}px`;
   bubble.classList.toggle("on-clock", !dead && !state.inCancel && isHalfHour(minutes));
   const minsEl = bubble.querySelector("strong");
   const endEl = bubble.querySelector("span");
-  if (minsEl) minsEl.textContent = minutes >= 60 ? short(minutes) : `${minutes} min`;
+  if (minsEl) minsEl.textContent = spoken(minutes);
   if (endEl) endEl.textContent = formatClock(endTime(minutes));
   placeTrash(trash, state);
   return state;
@@ -160,6 +236,7 @@ function startFilm() {
   const bubble = $("filmBubble");
   const cursor = $("filmCursor");
   const trash = $("filmTrash");
+  const dim = $("filmDim");
   const save = $("filmSave");
   const typed = $("filmTyped");
   const saveBtn = $("filmSaveBtn");
@@ -183,6 +260,7 @@ function startFilm() {
   async function loop() {
     while (running) {
       hideDrag(line, glass, bubble, trash);
+      setDim(dim, false);
       cursor.style.opacity = "0";
       save.classList.remove("show");
       typed.textContent = "";
@@ -190,22 +268,27 @@ function startFilm() {
       status.textContent = "";
 
       const from = iconCenter(icon, play);
+      const screenH = play.clientHeight;
+      const target = pixelsFromSeconds(25 * 60, screenH);
+      const driftX = Math.min(36, target * 0.22);
+      const driftY = Math.sqrt(Math.max(0, target * target - driftX * driftX));
       cursor.style.left = `${from.x}px`;
       cursor.style.top = `${from.y}px`;
       cursor.style.opacity = "1";
       await wait(700);
       if (!running) break;
 
+      setDim(dim, true);
       const steps = 42;
       for (let i = 1; i <= steps; i += 1) {
         if (!running) break;
         const t = 1 - (1 - i / steps) ** 2;
-        const to = { x: from.x - t * 72, y: from.y + 16 + t * 220 };
-        const minutes = minutesFromDistance(to.y - from.y);
+        const to = { x: from.x - t * driftX, y: from.y + t * driftY };
+        const minutes = minutesFromDistance(Math.hypot(to.x - from.x, to.y - from.y), screenH);
         placeDrag(play, line, glass, bubble, from, to, minutes, trash);
         cursor.style.left = `${to.x}px`;
         cursor.style.top = `${to.y}px`;
-        $("filmMins").textContent = minutes >= 60 ? short(minutes) : `${minutes} min`;
+        $("filmMins").textContent = spoken(minutes);
         $("filmEnd").textContent = formatClock(endTime(minutes));
         $("filmVerbose").textContent = verbose(minutes);
         $("filmSaveEnd").textContent = formatClock(endTime(minutes));
@@ -215,6 +298,7 @@ function startFilm() {
       if (!running) break;
 
       hideDrag(line, glass, bubble, trash);
+      setDim(dim, false);
       cursor.style.opacity = "0";
       save.classList.add("show");
       await wait(600);
@@ -238,7 +322,10 @@ function startFilm() {
     toggle.textContent = running ? "Pause" : "Play";
     toggle.setAttribute("aria-pressed", String(running));
     if (running) loop();
-    else window.clearTimeout(timer);
+    else {
+      window.clearTimeout(timer);
+      setDim(dim, false);
+    }
   });
 
   if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -260,6 +347,7 @@ function startTry() {
   const glass = $("tryGlass");
   const bubble = $("tryBubble");
   const trash = $("tryTrash");
+  const dim = $("tryDim");
   const save = $("trySave");
   const list = $("tryList");
   const rows = $("tryRows");
@@ -270,17 +358,18 @@ function startTry() {
   let dragging = false;
   let dragged = false;
   let inCancel = false;
+  let heldQuarter = null;
   let minutes = 15;
   const timers = [];
 
   const setMinutes = (value) => {
     minutes = value;
-    $("tryMins").textContent = minutes >= 60 ? short(minutes) : `${minutes} min`;
+    $("tryMins").textContent = spoken(minutes);
     $("tryEnd").textContent = formatClock(endTime(minutes));
     $("tryVerbose").textContent = verbose(minutes);
     $("tryShort").textContent = short(minutes);
     $("trySaveEnd").textContent = formatClock(endTime(minutes));
-    $("trySlider").style.width = `${Math.min(100, (minutes / 90) * 100)}%`;
+    $("trySlider").style.width = `${normalizedFromSeconds(minutes * 60) * 100}%`;
     canvas.querySelectorAll("[data-mins]").forEach((btn) => {
       btn.classList.toggle("on", Number(btn.dataset.mins) === minutes);
     });
@@ -295,7 +384,10 @@ function startTry() {
     const to = { x: event.clientX - box.left, y: event.clientY - box.top };
     const dist = Math.hypot(to.x - from.x, to.y - from.y);
     if (dist > DEAD_ZONE) dragged = true;
-    setMinutes(minutesFromDistance(dist));
+    const screenH = canvas.clientHeight;
+    setMinutes(minutesFromDistance(dist, screenH, heldQuarter));
+    const slot = clockSlot(minutes * 60, 15);
+    heldQuarter = minutes > 0 ? slot : null;
     const state = placeDrag(canvas, line, glass, bubble, from, to, minutes, trash);
     if (state.inCancel && !inCancel && navigator.vibrate) navigator.vibrate(12);
     inCancel = state.inCancel;
@@ -315,6 +407,8 @@ function startTry() {
     dragging = false;
     const cancelled = inCancel;
     inCancel = false;
+    heldQuarter = null;
+    setDim(dim, false);
     hideDrag(line, glass, bubble, trash);
     window.removeEventListener("pointermove", onMove);
     window.removeEventListener("pointerup", onUp);
@@ -335,6 +429,8 @@ function startTry() {
     dragging = true;
     dragged = false;
     inCancel = false;
+    heldQuarter = null;
+    setDim(dim, true);
     save.classList.remove("show");
     list.hidden = true;
     hint.textContent = "Further down, longer timer";

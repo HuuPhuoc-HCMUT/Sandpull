@@ -247,18 +247,29 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
   min-height: 0;
   z-index: 1;
 }
+.drag-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease;
+}
+.drag-dim.on { opacity: 1; }
 .line {
   position: absolute;
-  width: 4px;
-  background: var(--line);
+  width: 3.6px;
+  background: #9ef0f5;
   border-radius: 99px;
   transform-origin: top center;
   opacity: 0;
   left: 0; top: 0;
   pointer-events: none;
+  z-index: 2;
+  box-shadow: 0 0 0 2.2px rgba(47, 125, 138, 0.28);
 }
 .line.faded { opacity: 0.28 !important; }
-.glass, .bubble, .cursor, .trash { position: absolute; opacity: 0; pointer-events: none; }
+.glass, .bubble, .cursor, .trash { position: absolute; opacity: 0; pointer-events: none; z-index: 2; }
 .trash {
   left: 50%;
   bottom: 52px;
@@ -268,9 +279,9 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: rgba(41, 71, 82, 0.35);
-  outline: 1px solid rgba(47, 125, 138, 0.35);
-  transform: scale(0.7);
+  background: rgba(71, 117, 128, 0.96);
+  outline: 2px solid #9ef0f5;
+  transform: scale(1.05);
   transform-origin: center;
 }
 .trash svg {
@@ -283,8 +294,8 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
   stroke-linejoin: round;
 }
 .trash.on {
-  background: rgba(255, 59, 48, 0.22);
-  outline-color: rgba(255, 59, 48, 0.5);
+  background: rgba(255, 59, 48, 0.72);
+  outline-color: #ff3b30;
 }
 .trash.on svg {
   stroke: #ff3b30;
@@ -297,15 +308,15 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
 }
 .bubble {
   min-width: 86px;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: 12px;
-  background: var(--ink);
+  background: rgba(71, 117, 128, 0.96);
   color: #fff;
-  transform: translate(18px, -10px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
 }
 .bubble strong {
   display: block;
@@ -319,7 +330,7 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
   line-height: 1.2;
   opacity: .7;
 }
-.bubble.on-clock { background: var(--sand-deep); }
+.bubble.on-clock { background: rgba(107, 92, 51, 0.97); }
 .cursor {
   width: 14px; height: 14px;
   border-radius: 50%;
@@ -337,6 +348,7 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
   background: var(--glass);
   overflow: hidden;
   opacity: 0;
+  z-index: 3;
   transform: translateY(-8px) scale(0.96);
   pointer-events: none;
 }
