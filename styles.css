@@ -362,7 +362,7 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
 .spoken-block { margin: 0 0 10px; }
 .spoken-block p {
   margin: 0;
-  font-size: 16px;
+  font-size: 14.4px;
   font-weight: 510;
   font-variant-numeric: tabular-nums;
   line-height: 1.25;
