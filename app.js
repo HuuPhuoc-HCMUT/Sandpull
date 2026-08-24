@@ -290,7 +290,7 @@ function startFilm() {
         cursor.style.top = `${to.y}px`;
         $("filmMins").textContent = spoken(minutes);
         $("filmEnd").textContent = formatClock(endTime(minutes));
-        $("filmVerbose").textContent = verbose(minutes);
+        $("filmVerbose").textContent = spoken(minutes);
         $("filmSaveEnd").textContent = formatClock(endTime(minutes));
         await wait(38);
       }
@@ -366,8 +366,7 @@ function startTry() {
     minutes = value;
     $("tryMins").textContent = spoken(minutes);
     $("tryEnd").textContent = formatClock(endTime(minutes));
-    $("tryVerbose").textContent = verbose(minutes);
-    $("tryShort").textContent = short(minutes);
+    $("tryVerbose").textContent = spoken(minutes);
     $("trySaveEnd").textContent = formatClock(endTime(minutes));
     $("trySlider").style.width = `${normalizedFromSeconds(minutes * 60) * 100}%`;
     canvas.querySelectorAll("[data-mins]").forEach((btn) => {
@@ -478,8 +477,8 @@ function startTry() {
     }
     rows.innerHTML = timers.map((item) => {
       const left = Math.max(0, Math.round((item.ends - Date.now()) / 1000));
-      const label = left < 60 ? `${left}s` : `${Math.floor(left / 60)}m`;
-      return `<div class="row"><div class="grow"><b>${item.title}</b><small>${formatClock(item.ends)}</small></div><div class="pill">${label}</div></div>`;
+      const mins = Math.max(1, Math.round(left / 60));
+      return `<div class="row"><div class="grow spoken-block"><p><span>in</span> <strong>${spoken(mins)}</strong></p><p><span>at</span> <strong>${formatClock(item.ends)}</strong></p><small>${item.title}</small></div></div>`;
     }).join("");
   }
 

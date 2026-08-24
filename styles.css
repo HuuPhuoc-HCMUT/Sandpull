@@ -359,11 +359,16 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
   transition: 180ms ease;
 }
 .save-head, .save-label { padding: 16px 18px 12px; }
-.save-head h3 { font-size: 18px; margin: 0 0 6px; }
-.save-meta {
-  display: flex; justify-content: space-between;
-  font-size: 12px; color: var(--muted); margin-bottom: 8px;
+.spoken-block { margin: 0 0 10px; }
+.spoken-block p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 510;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
 }
+.spoken-block span { color: var(--muted); font-weight: 500; font-size: 0.94em; }
+.spoken-block strong { font-weight: 510; }
 .slider {
   height: 4px; border-radius: 99px;
   background: var(--panel); margin-bottom: 12px;
@@ -442,7 +447,9 @@ h2 { font-size: clamp(28px, 3.2vw, 40px); }
   padding: 10px 16px; min-height: 54px;
 }
 .row b { display: block; font-size: 13px; font-weight: 560; }
-.row small { color: var(--muted); font-size: 11px; }
+.row small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+.list-panel .spoken-block { margin: 0; }
+.list-panel .spoken-block p { font-size: 14px; }
 .row .grow { flex: 1; }
 .pill {
   width: 80px; height: 26px; border-radius: 999px;
